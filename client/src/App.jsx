@@ -30,7 +30,7 @@ class App extends React.Component{
 
 audioInfo = (url,title,artist,anime,season,type,songIndex,calledFromPlayer) =>{
   console.log("audioInfo:", url,title,artist,anime,season,type,songIndex);
-  this.setState({url:url, title:title, artist:artist, type:type,songIndex:songIndex,calledFromPlayer:calledFromPlayer});
+  this.setState({url:url, title:title, artist:artist, type:type,calledFromPlayer:calledFromPlayer});
   season ? this.setState({anime:anime+" "+season}) : this.setState({anime:anime});
   this.setChildMethod();
 }
@@ -45,21 +45,21 @@ receivePlaylist = (_id) =>{
   this.setState({_id:_id})
 }
 
-clearID = (childUnmountPlaylist) =>{
-  this.clearID = childUnmountPlaylist;
-  this.setState({_id:''});
+// clearID = (childUnmountPlaylist) =>{
+//   this.clearID = childUnmountPlaylist;
+//   this.setState({_id:''});
+// }
+
+playlistNextSong = (childMethod) =>{
+  this.playlistNextSong = childMethod;
 }
 
-playNextSong = (childMethod) =>{
-  this.playNextSong = childMethod;
-}
-
-handleNextSong = (i) =>{
-  if(i){
+handleNextSong = () =>{
+  if(true){
     let calledFromPlayer = this.state.calledFromPlayer;
     if(calledFromPlayer){
       console.log("Handling next song, passing to playlist component");
-      this.playNextSong();
+      this.playlistNextSong();
     }
     else{
       console.log("Handling next song, passing to search component");
@@ -90,7 +90,7 @@ render(){
           
             <Route exact path="/" render={() => <React.Fragment><SearchSong sendToApp={this.audioInfo}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route path="/signin" render={() => <Admin value = {admin} sendPlaylistApp={this.receivePlaylist}/>} />
-            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playNextSong={this.playNextSong}/>} />
+            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong}/>} />
 
           <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} setChildMethod={this.setChildMethod} playNextSong={this.handleNextSong}/>
           <footer>

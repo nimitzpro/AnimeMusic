@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import '../styles/audioplayer.css';
 import play from "../assets/play.svg";
 import pause from "../assets/pause.svg";
+import shuffle from "../assets/shuffle.png";
 import {Link} from 'react-router-dom';
 
 let audio = new Audio();
@@ -14,11 +15,22 @@ export default class extends Component{
             playing: false,
             button: play,
             songTime: '0:00',
-            songLength:'0:00'
+            songLength:'0:00',
+            repeat: true, //false: Stop after song finishes, true: Continue to next song,
+            shuffle: false //, false: Ignore, true: Play random song in list
         }
     }
 
-    playSong= () => {
+    shuffleState = async (i) =>{
+        await this.setState({shuffle:i});
+        console.log("Shuffle :",this.state.shuffle);
+    }
+    repeatState = async (i) =>{
+        await this.setState({repeat:i});
+        console.log("Repeat :",this.state.repeat);
+    }
+
+    playSong = () => {
         console.log("play");
         this.setState({ playing: true });
         audio.play(); 
@@ -78,9 +90,11 @@ export default class extends Component{
         }
 
         audio.onended = () => {
-            const continuePlaying = true; // Change to stop/repeat song only/repeat playlist/shuffle button
-            if(continuePlaying){
-                this.props.playNextSong(continuePlaying)
+            // const continuePlaying = true; // Change to stop/repeat song only/repeat playlist/shuffle button
+            let repeat = this.state.repeat;
+            let shuffle = this.state.shuffle;
+            if(repeat){
+                this.props.playNextSong(shuffle)
             }
         }
 
@@ -89,16 +103,20 @@ export default class extends Component{
             {this.audio}
             
     {/* <marquee behaviour="slide" scrolldelay="10"> */}
+    <div id="songinfo">
     <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type}</span>
+    </div>
     {/* </marquee> */}
     
-    <div id="buttons"><button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img id="icon" src={this.state.button} alt='' /></button>
-    <br/>
+    <div id="buttons">
+    <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
+    <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon" src={this.state.button} alt='' /></button>
+    <button id="audiobutton" onClick={this.state.repeat ? () => this.repeatState(false) : () => this.repeatState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
     <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
     </div>
-        
+        <div id="links">
         <Link to="/signin" className="link">Sign In/Register</Link>
-        
+        </div>
         </div>
 
         );
