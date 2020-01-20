@@ -19,6 +19,7 @@ class App extends React.Component{
       artist: '',
       anime: '',
       type: '',
+      songData:'',
       songIndex:'',
       _id:'',
       calledFromPlayer:''
@@ -27,6 +28,17 @@ class App extends React.Component{
       // songs:[]
     }
   }
+
+// handleSourceChange = (childFunc) =>{
+//   this.handleSourceChange = childFunc;
+// }
+
+sendSongData = async (songData, songIndex) =>{
+  // this.handleSourceChange();
+  await this.setState({songData:songData,songIndex,songIndex});
+  let k = songData[songIndex];
+  this.audioInfo(k.url,k.title,k.artist,k.anime,k.season,k.type,this.state.songIndex,true)
+}
 
 audioInfo = (url,title,artist,anime,season,type,songIndex,calledFromPlayer) =>{
   console.log("audioInfo:", url,title,artist,anime,season,type,songIndex);
@@ -58,12 +70,53 @@ handleNextSong = () =>{
   if(true){
     let calledFromPlayer = this.state.calledFromPlayer;
     if(calledFromPlayer){
-      console.log("Handling next song, passing to playlist component");
-      this.playlistNextSong();
+      this.getNextSong();
     }
     else{
       console.log("Handling next song, passing to search component");
     }
+  }
+}
+
+shuffle = (i,songDataLength) =>{
+  let x = Math.floor(Math.random() * songDataLength);
+  if(x === i){
+      this.shuffle(i,songDataLength);
+  }
+  else{
+      return x;
+  }
+}
+
+getNextSong = async(shuffle) =>{
+  console.log("SONG DATA PLS",this.state.songData)
+  let i = this.state.songIndex;
+  let songDataLength = this.state.songData.length-1;
+  console.log("shuffle",shuffle)
+  if(shuffle){
+      // this.playSong(this.shuffle(i,songDataLength));
+  }
+  else{
+      console.log("i",i)
+      if(i < songDataLength){
+      this.playSong(i+1);
+      }
+      else{
+          this.playSong(0);
+      }
+  }
+}
+
+
+playSong = async (i) =>{
+  console.log(i)
+  let songData = await this.state.songData;
+  console.log("TRIGGERED",songData);
+  if(songData != ''){
+    this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i,true);
+    this.setState({songIndex:i});
+      // this.handleOnClick(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i)
+      // this.setState({songIndex:i});
   }
 }
 
@@ -90,9 +143,9 @@ render(){
           
             <Route exact path="/" render={() => <React.Fragment><SearchSong sendToApp={this.audioInfo}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route path="/signin" render={() => <Admin value = {admin} sendPlaylistApp={this.receivePlaylist}/>} />
-            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong}/>} />
+            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong}/>} />
 
-          <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} setChildMethod={this.setChildMethod} playNextSong={this.handleNextSong}/>
+          <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} setChildMethod={this.setChildMethod} playNextSong={this.handleNextSong} handleSourceChange={this.handleSourceChange}/>
           <footer>
             <h3>2020 Alexander Stradnic &copy;</h3>
           </footer>

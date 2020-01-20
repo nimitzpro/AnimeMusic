@@ -11,6 +11,7 @@ export default class extends Component{
     constructor(props){
         super(props);
         this.props.setChildMethod(this.getSong);
+        // this.props.handleSourceChange(this.pauseSong);
         this.state = {
             playing: false,
             button: play,
