@@ -47,7 +47,7 @@ onSubmit = (e) =>{
     {this.state.loginRes.map((key) =>{ return <React.Fragment><span><h1>{key.username}'s Profile</h1></span><span><h4>{key.email}</h4></span><h4 style={{color:"crimson"}}>{key.admin ? "Admininstrator" : ""}</h4>
     <h2>Playlists : </h2><br /><span><table><tr><th>Name</th><th>Privacy</th><th>Length</th></tr>
     {key.playlists.map((element) => {
-        return(<tr><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
+        return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
     })}</table></span></React.Fragment>})}</React.Fragment>;
         this.setState({content:response})}
         else{

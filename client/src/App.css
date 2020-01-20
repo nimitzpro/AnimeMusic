@@ -1,7 +1,7 @@
 .App{
   background-image:linear-gradient(rgba(255, 255, 255, 0.657),rgba(255, 255, 255, 0.657));
   font-size:1.75em;
-  margin-bottom: 3em;
+  margin-bottom: 4em;
 }
 table{
   display:inline-block;
@@ -61,4 +61,7 @@ table tr + tr:hover{
 }
 table tr{
   transition:all 0.5s ease-in-out;
+}
+.currentlyPlayingSong{
+  background-color:rgba(255, 255, 255, 0.781);
 }

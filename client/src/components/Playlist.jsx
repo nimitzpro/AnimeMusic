@@ -32,7 +32,7 @@ class Playlist extends Component{
         for(var i=0;i<result.data.songs.length;i++){
             let index = i;
             let key = result.data.songs[i];
-            songList.push(<tr key={key._id}>
+            songList.push(<tr key={key._id} id={key._id}>
             <td><button onClick={() => this.changePlaylistAndPlay(sendtoSongData,index)}><img src={play} alt='' /></button></td>
             <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type}</td></tr>);
         }

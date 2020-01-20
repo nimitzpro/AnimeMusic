@@ -11,6 +11,8 @@ export default class extends Component{
     constructor(props){
         super(props);
         this.props.setChildMethod(this.getSong);
+        this.props.setAudioPlayerLink2(this.setLink);
+        this.props.setAudioPlayerLink3(this.removeLink);
         // this.props.handleSourceChange(this.pauseSong);
         this.state = {
             playing: false,
@@ -18,8 +20,17 @@ export default class extends Component{
             songTime: '0:00',
             songLength:'0:00',
             repeat: true, //false: Stop after song finishes, true: Continue to next song,
-            shuffle: false //, false: Ignore, true: Play random song in list
+            shuffle: false, //, false: Ignore, true: Play random song in list
+            linkIsActive: ["activeLink","disabled-link"]
         }
+    }
+
+    setLink = () =>{
+        document.getElementById('songinfo').setAttribute('class',`${this.state.linkIsActive[0]}`)
+    }
+
+    removeLink = () =>{
+        document.getElementById('songinfo').setAttribute('class',`${this.state.linkIsActive[1]}`)
     }
 
     shuffleState = async (i) =>{
@@ -47,7 +58,11 @@ export default class extends Component{
 
     getSong = async () => {
         await this.props.url;
-        audio.src = this.props.url;
+        try{
+            audio.src = this.props.url;
+        }catch(error){
+            console.log(error)
+        }
         console.log("Calling getSong...",audio.src);
         audio.play();
         this.setState({ playing: true });
@@ -104,8 +119,10 @@ export default class extends Component{
             {this.audio}
             
     {/* <marquee behaviour="slide" scrolldelay="10"> */}
-    <div id="songinfo">
+    <div id="songinfo" className={this.state.linkIsActive[1]}>
+    <Link to="/playlist">
     <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type}</span>
+    </Link>
     </div>
     {/* </marquee> */}
     
