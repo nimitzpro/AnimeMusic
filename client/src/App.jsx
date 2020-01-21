@@ -23,7 +23,8 @@ class App extends React.Component{
       songIndex:'',
       _id:'',
       calledFromPlayer:'',
-      playlistPlaying:false
+      playlistPlaying:false,
+      songKey:''
       // name:'',
       // private:'',
       // songs:[]
@@ -34,15 +35,17 @@ class App extends React.Component{
 //   this.handleSourceChange = childFunc;
 // }
 
-sendSongData = async (songData, songIndex) =>{
+sendSongData = async (songData, songIndex,songKey) =>{
   // this.handleSourceChange();
-  await this.setState({songData:songData,songIndex,songIndex});
-  let k = songData[songIndex];
-  this.audioInfo(k.url,k.title,k.artist,k.anime,k.season,k.type,this.state.songIndex,true);
+  await this.setState({songData:songData,songIndex:songIndex},()=>{
+    let k = songData[songIndex];
+    // this.audioInfo(k.url,k.title,k.artist,k.anime,k.season,k.type,this.state.songIndex,true,songKey);
+    this.playSong(this.state.songIndex,songKey)
+  });
   // this.setState({playlistPlaying:true});
 }
 
-setAudioPlayerLink = (_id) =>{
+setAudioPlayerLink = (_id,songKey) =>{
   console.log("AudioLink :",_id,", calledFromPlayer", this.state.calledFromPlayer);
   this.setState({_id:_id});
   if(_id == '' || this.state.calledFromPlayer == false){
@@ -51,6 +54,8 @@ setAudioPlayerLink = (_id) =>{
   else{
     this.setAudioPlayerLink2();
   }
+
+  this.setChildMethod(); // Pass data to AudioPlayer
 }
 
 setAudioPlayerLink2 = (childMethod) =>{
@@ -61,11 +66,12 @@ setAudioPlayerLink3 = (childMethod) =>{
   this.setAudioPlayerLink3 = childMethod;
 }
 
-audioInfo = (url,title,artist,anime,season,type,songIndex,calledFromPlayer) =>{
-  console.log("audioInfo:", url,title,artist,anime,season,type,songIndex);
-  this.setState({url:url, title:title, artist:artist, type:type,calledFromPlayer:calledFromPlayer},() => this.setAudioPlayerLink(this.state._id));// Pass link if from playlist/no link if from search to AudioPlayer
+audioInfo = (url,title,artist,anime,season,type,songIndex,calledFromPlayer,songKey) =>{
+  console.log("Songkey in audioinfo",songKey);
   season ? this.setState({anime:anime+" "+season}) : this.setState({anime:anime});
-  this.setChildMethod(); // Pass data to AudioPlayer
+  console.log("audioInfo:", url,title,artist,anime,season,type,songIndex,songKey);
+  this.setState({url:url, title:title, artist:artist, type:type,calledFromPlayer:calledFromPlayer},() => (this.setAudioPlayerLink(this.state._id,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
+  // this.setState({songKey:songKey},()=>
 }
 
 setChildMethod = (childMethod) => {
@@ -120,24 +126,43 @@ getNextSong = async(shuffle) =>{
   else{
       console.log("i",i)
       if(i < songDataLength){
-      this.playSong(i+1);
+      this.playSong(i+1,this.state.songData[i+1]._id);
       }
       else{
-          this.playSong(0);
+          this.playSong(0,this.state.songData[0]._id);
       }
   }
 }
 
 
-playSong = async (i) =>{
-  console.log(i)
+playSong = async (i,songKey) =>{
+  console.log("in playsong",i,songKey);
+  if(this.state.songKey !== ''){
+    try{
+    document.getElementById(`${this.state.songKey}`).setAttribute('class','');
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
+  this.setState({songKey:songKey},()=>document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`));
   let songData = await this.state.songData;
   console.log("TRIGGERED",songData);
   if(songData != ''){
-    this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i,true);
+    console.log("in playsong 2 :",i,songKey)
+    this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i,true,songKey);
     this.setState({songIndex:i});
       // this.handleOnClick(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i)
       // this.setState({songIndex:i});
+  }
+}
+
+checkForCurrentlyPlaying = () =>{
+  try{
+    document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`);
+  }
+  catch(err){
+    console.log("Item not found");
   }
 }
 
@@ -164,7 +189,7 @@ render(){
           
             <Route exact path="/" render={() => <React.Fragment><SearchSong sendToApp={this.audioInfo}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route path="/signin" render={() => <Admin value = {admin} sendPlaylistApp={this.receivePlaylist}/>} />
-            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong}/>} />
+            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/>} />
 
           <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} handleSourceChange={this.handleSourceChange}/>
           <footer>

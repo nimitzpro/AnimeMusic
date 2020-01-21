@@ -1,6 +1,5 @@
 import React,{Component} from 'react';
 import Axios from 'axios';
-import shuffle from "../assets/shuffle.png";
 import play from "../assets/play.svg";
 
 class Playlist extends Component{
@@ -14,11 +13,14 @@ class Playlist extends Component{
         }
     }
 
-    changePlaylistAndPlay = async (songData,i) =>{
-        this.props.sendSongData(songData,i);
-        this.props.playSong(i);
+    changePlaylistAndPlay = async (songData,i,songKey) =>{
+        this.props.sendSongData(songData,i,songKey);
+        // this.props.playSong(i,songKey);
     }
     
+    componentDidUpdate(){
+        this.props.checkForCurrentlyPlaying();
+    }
       
     componentDidMount(){
         let _id = this.props._id;
@@ -33,13 +35,13 @@ class Playlist extends Component{
             let index = i;
             let key = result.data.songs[i];
             songList.push(<tr key={key._id} id={key._id}>
-            <td><button onClick={() => this.changePlaylistAndPlay(sendtoSongData,index)}><img src={play} alt='' /></button></td>
+            <td><button onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)}><img src={play} alt='' /></button></td>
             <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type}</td></tr>);
         }
         // console.log(songList);
         let songs = <React.Fragment><h2>{result.data.name}</h2>
         {/* <button onClick={() => console.log("Shuffle!")} style={{marginRight:2+"em"}}><img src={shuffle} alt='' /></button>    */}
-        <button onClick={() => this.changePlaylistAndPlay(sendtoSongData,0)}><img src={play} alt='' /></button><br />
+        <button onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /></button><br />
         <table>
         <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
         {songList}
