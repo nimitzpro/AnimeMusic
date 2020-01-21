@@ -30,14 +30,21 @@
     margin:0 0 0 0;
     display:inline-block;
     position:relative;
-    transition:all 0.5s ease-in-out;
+    transition:all 0.2s ease-in-out;
 }
-#audioplayer .icon:hover{
-    background-color:lightgray;
+#audioplayer .mainIcon:hover{
+    background-color:rgb(235, 235, 235);
 }
 #audioplayer .secIcon{
     height:60%;
     width:auto;
+    background-color:lightgray;
+    transition:all 0.5s ease;
+    border-radius: 50%;
+}
+#audioplayer .enabled{
+    background-color:white;
+    box-shadow: 0.5em 0.5em 3em white, -0.5em -0.5em 3em white, 0.5em -0.5em 3em white, -0.5em 0.5em 3em white; 
 }
 #audioplayer button{
     height:4em;

@@ -24,7 +24,8 @@ class App extends React.Component{
       _id:'',
       calledFromPlayer:'',
       playlistPlaying:false,
-      songKey:''
+      songKey:'',
+      playlistPlayingID:''
       // name:'',
       // private:'',
       // songs:[]
@@ -38,17 +39,18 @@ class App extends React.Component{
 sendSongData = async (songData, songIndex,songKey) =>{
   // this.handleSourceChange();
   await this.setState({songData:songData,songIndex:songIndex},()=>{
-    let k = songData[songIndex];
+    this.setState({playlistPlayingID:this.state._id});
+    // let k = songData[songIndex];
     // this.audioInfo(k.url,k.title,k.artist,k.anime,k.season,k.type,this.state.songIndex,true,songKey);
     this.playSong(this.state.songIndex,songKey)
   });
   // this.setState({playlistPlaying:true});
 }
 
-setAudioPlayerLink = (_id,songKey) =>{
-  console.log("AudioLink :",_id,", calledFromPlayer", this.state.calledFromPlayer);
-  this.setState({_id:_id});
-  if(_id == '' || this.state.calledFromPlayer == false){
+setAudioPlayerLink = (playlistPlayingID,songKey) =>{
+  console.log("AudioLink :",playlistPlayingID,", calledFromPlayer", this.state.calledFromPlayer);
+  // this.setState({_id:_id});
+  if(playlistPlayingID == '' || this.state.calledFromPlayer == false){
     this.setAudioPlayerLink3();
   }
   else{
@@ -70,7 +72,7 @@ audioInfo = (url,title,artist,anime,season,type,songIndex,calledFromPlayer,songK
   console.log("Songkey in audioinfo",songKey);
   season ? this.setState({anime:anime+" "+season}) : this.setState({anime:anime});
   console.log("audioInfo:", url,title,artist,anime,season,type,songIndex,songKey);
-  this.setState({url:url, title:title, artist:artist, type:type,calledFromPlayer:calledFromPlayer},() => (this.setAudioPlayerLink(this.state._id,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
+  this.setState({url:url, title:title, artist:artist, type:type,calledFromPlayer:calledFromPlayer},() => (this.setAudioPlayerLink(this.state.playlistPlayingID,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
   // this.setState({songKey:songKey},()=>
 }
 
@@ -93,11 +95,11 @@ playlistNextSong = (childMethod) =>{
   this.playlistNextSong = childMethod;
 }
 
-handleNextSong = () =>{
+handleNextSong = (shuffle) =>{
   if(true){
     let calledFromPlayer = this.state.calledFromPlayer;
     if(calledFromPlayer){
-      this.getNextSong();
+      this.getNextSong(shuffle);
     }
     else{
       console.log("Handling next song, passing to search component");
@@ -121,7 +123,8 @@ getNextSong = async(shuffle) =>{
   let songDataLength = this.state.songData.length-1;
   console.log("shuffle",shuffle)
   if(shuffle){
-      // this.playSong(this.shuffle(i,songDataLength));
+      let res = this.shuffle(i,songDataLength);
+      this.playSong(res,this.state.songData[res]._id);
   }
   else{
       console.log("i",i)
@@ -145,7 +148,14 @@ playSong = async (i,songKey) =>{
       console.log(e);
     }
   }
-  this.setState({songKey:songKey},()=>document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`));
+  this.setState({songKey:songKey},()=>{
+    try {
+      document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`)
+    }
+    catch(err){
+      console.log("");
+    }
+  });
   let songData = await this.state.songData;
   console.log("TRIGGERED",songData);
   if(songData != ''){
@@ -157,12 +167,21 @@ playSong = async (i,songKey) =>{
   }
 }
 
-checkForCurrentlyPlaying = () =>{
-  try{
-    document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`);
+checkForCurrentlyPlaying = (playlistSongData) =>{
+  // let p1 = await this.state.songData;
+  // let p2 = await playlistSongData;
+  // console.log(p1,p2);
+  if(this.state.songData == playlistSongData.toString()){
+    console.log("in if")
+    try{
+      document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`);
+    }
+    catch(err){
+      console.log("Item not found");
+    }
   }
-  catch(err){
-    console.log("Item not found");
+  else{
+    console.log("failed")
   }
 }
 
@@ -189,8 +208,8 @@ render(){
           
             <Route exact path="/" render={() => <React.Fragment><SearchSong sendToApp={this.audioInfo}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route path="/signin" render={() => <Admin value = {admin} sendPlaylistApp={this.receivePlaylist}/>} />
-            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/>} />
-
+            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
+            <Route path="/currentplaylist" render={() => <Playlist _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
           <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} handleSourceChange={this.handleSourceChange}/>
           <footer>
             <h3>2020 Alexander Stradnic &copy;</h3>

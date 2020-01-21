@@ -1,5 +1,4 @@
 1. Fix fetch issue with playlists DONE
 2. Make currently playing hover work when re rendering playlist comp. DONE
-
-3. Implement repeat/shuffle/skip buttons
+3. Implement repeat/shuffle/skip buttons STARTED
 4. Authentication/login sessions/security

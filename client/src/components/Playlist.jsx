@@ -8,7 +8,7 @@ class Playlist extends Component{
         // this.props.playlistNextSong(this.getNextSong);
         this.state = {
             content:'',
-            songData:'',
+            playlistSongData:'',
             songIndex:''
         }
     }
@@ -18,8 +18,10 @@ class Playlist extends Component{
         // this.props.playSong(i,songKey);
     }
     
-    componentDidUpdate(){
-        this.props.checkForCurrentlyPlaying();
+    kek = () =>{
+        console.log("Playlist songdata :", this.state.playlistSongData);
+        console.log("kek")
+        this.props.checkForCurrentlyPlaying(this.state.playlistSongData);
     }
       
     componentDidMount(){
@@ -28,6 +30,7 @@ class Playlist extends Component{
         Axios.get('/playlist/'+_id,{}).then((result) =>{
         console.log(result);  
         let sendtoSongData = result.data.songs;
+        this.setState({playlistSongData:sendtoSongData});
         // this.setState({songData:sendtoSongData});
         // console.log(this.state.songData);
         let songList = [];
@@ -47,7 +50,7 @@ class Playlist extends Component{
         {songList}
         </table></React.Fragment>;
             this.setState({content:songs});  
-        });
+        }).then(()=>this.kek());
     }
 
 

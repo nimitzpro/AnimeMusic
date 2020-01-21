@@ -34,7 +34,9 @@ export default class extends Component{
     }
 
     shuffleState = async (i) =>{
-        await this.setState({shuffle:i});
+        await this.setState({shuffle:i},()=>{
+            document.getElementById('shuffleIcon').classList.toggle('enabled');
+        });
         console.log("Shuffle :",this.state.shuffle);
     }
     repeatState = async (i) =>{
@@ -120,15 +122,15 @@ export default class extends Component{
             
     {/* <marquee behaviour="slide" scrolldelay="10"> */}
     <div id="songinfo" className={this.state.linkIsActive[1]}>
-    <Link to="/playlist">
+    <Link to="/currentplaylist">
     <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type}</span>
     </Link>
     </div>
     {/* </marquee> */}
     
     <div id="buttons">
-    <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
-    <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon" src={this.state.button} alt='' /></button>
+    <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" id="shuffleIcon" src={shuffle} alt='' /></button>
+    <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon mainIcon" src={this.state.button} alt='' /></button>
     <button id="audiobutton" onClick={this.state.repeat ? () => this.repeatState(false) : () => this.repeatState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
     <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
     </div>
