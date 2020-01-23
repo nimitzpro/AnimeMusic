@@ -3,6 +3,8 @@ import '../styles/audioplayer.css';
 import play from "../assets/play.svg";
 import pause from "../assets/pause.svg";
 import shuffle from "../assets/shuffle.png";
+import skipBack from "../assets/skipBack.svg";
+import skip from "../assets/skip.svg";
 import {Link} from 'react-router-dom';
 
 let audio = new Audio();
@@ -42,6 +44,14 @@ export default class extends Component{
     repeatState = async (i) =>{
         await this.setState({repeat:i});
         console.log("Repeat :",this.state.repeat);
+    }
+
+    skipForward = () => {
+        this.props.playNextSong(this.state.shuffle);
+    }
+
+    skipBackward = () => {
+        this.props.playPrevSong();
     }
 
     playSong = () => {
@@ -130,12 +140,14 @@ export default class extends Component{
     
     <div id="buttons">
     <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" id="shuffleIcon" src={shuffle} alt='' /></button>
+    <button id="audiobutton" onClick={this.skipBackward}><img className="icon secIcon" src={skipBack} alt='' /></button>
     <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon mainIcon" src={this.state.button} alt='' /></button>
+    <button id="audiobutton" onClick={this.skipForward}><img className="icon secIcon" src={skip} alt='' /></button>
     <button id="audiobutton" onClick={this.state.repeat ? () => this.repeatState(false) : () => this.repeatState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
     <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
     </div>
         <div id="links">
-        <Link to="/signin" className="link">Sign In/Register</Link>
+        {this.props.isSignedIn ? <div>Signed in as <Link to="/signin" className="link">{this.props.username}</Link></div> : <Link to="/signin" className="link">{"Sign In/Register"}</Link>}
         </div>
         </div>
 

@@ -10,7 +10,7 @@ export default class extends Component{
         super(props);
         this.state = {
             login: "Register",
-            content: <Login sendPlaylist={this.sendPlaylistAdmin}/>
+            content: <Login sendPlaylist={this.sendPlaylistAdmin} sendUid={this.sendUid} isSignedIn={this.props.isSignedIn} accountData={this.props.accountData}/>
         }
     }
 
@@ -23,12 +23,16 @@ export default class extends Component{
 
     // }
 
+    sendUid = (accountData) =>{
+        this.props.sendUid(accountData);
+    }
+
     handleClick = () =>{
         if(this.state.login === "Register"){
             this.setState({content:<Register />,login:"Login"});
         }
         else{
-            this.setState({content:<Login sendPlaylist={this.sendPlaylistAdmin}/>,login:"Register"});
+            this.setState({content:<Login sendPlaylist={this.sendPlaylistAdmin} sendUid={this.sendUid}/>,login:"Register"});
         }
     }
 

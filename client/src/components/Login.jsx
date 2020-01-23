@@ -22,7 +22,38 @@ constructor(props){
 }
 
 componentDidMount(){
+    let accountData = this.props.accountData;
+    if(accountData !== undefined){
+        // console.log("Got to here",this.props);
+        let key = accountData;
+        let response = <React.Fragment>
+            <span><h1>{key.username}'s Profile</h1></span><span><h4>{key.email}</h4></span><h4 style={{color:"crimson"}}>{key.admin ? "Admininstrator" : ""}</h4>
+            <h2>Playlists : </h2><br /><span><table><tr><th>Name</th><th>Privacy</th><th>Length</th></tr>{
+            key.playlists.map((element) => {
+        return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
+    })}</table></span></React.Fragment>
+    this.setState({content:response});
+}
+//         let email = this.props.email;
+//         let pass = this.props.pass;
+//         axios.post("/signin/login",{email,pass})
+//     .then((result) => {
+//         let playlist;
+//         if(result.data.length > 0){
+//         this.setState({loginRes:result.data});
+//         // console.log(result.data);
+//         let response = <React.Fragment>
+//     {this.state.loginRes.map((key) =>{ return <React.Fragment><span><h1>{key.username}'s Profile</h1></span><span><h4>{key.email}</h4></span><h4 style={{color:"crimson"}}>{key.admin ? "Admininstrator" : ""}</h4>
+//     <h2>Playlists : </h2><br /><span><table><tr><th>Name</th><th>Privacy</th><th>Length</th></tr>
+//     {key.playlists.map((element) => {
+//         return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
+//     })}</table></span></React.Fragment>})}</React.Fragment>;
+//         this.setState({content:response});
+//     }
+// });
+    else{
         this.setState({content:this.state.logHorizon});
+    }
 }
 
 onChange = (e) => {
@@ -49,7 +80,11 @@ onSubmit = (e) =>{
     {key.playlists.map((element) => {
         return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
     })}</table></span></React.Fragment>})}</React.Fragment>;
-        this.setState({content:response})}
+        this.setState({content:response},()=>{
+            // console.log(result.data[0]);
+            this.props.sendUid(result.data[0]);
+        });
+    }
         else{
             this.setState({email:'',pass:''});
             document.getElementById("signInForm").reset();

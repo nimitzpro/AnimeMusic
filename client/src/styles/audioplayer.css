@@ -5,6 +5,7 @@
     bottom: 0;
     width:100%;
     background-image: linear-gradient(to right,rgb(182, 220, 255),rgb(39, 106, 168));
+    /* background-image: linear-gradient(to right,rgb(182, 220, 255) 25%, rgb(50,50,50) 35% 65%,75%, rgb(39, 106, 168) 100%); */
     text-align:left;
     display:flex;
     flex-wrap:wrap;
@@ -21,30 +22,40 @@
     padding:0 1em;
 }
 #audioplayer .icon{
-    height:80%;
+    height:90%;
     padding:0.5em;
-    background-color:white;
-    border:0.1em solid black;
+    /* background-color:white; */
+    /* border:0.1em solid black; */
     border-radius:50%;
     outline: none;
     margin:0 0 0 0;
     display:inline-block;
     position:relative;
+    border: 0.1em solid transparent;
+    /* margin: -20px -20px; */
     transition:all 0.2s ease-in-out;
+    /* outline-offset: -2em; */
+    /* box-sizing: border-box; */
 }
-#audioplayer .mainIcon:hover{
-    background-color:rgb(235, 235, 235);
+#audioplayer .icon:hover{
+    background-color:rgba(255,255,255,0.2);
+    border: 0.1em solid crimson;
+    box-shadow: inset 0.25em 0.25em 1em white, -0.25em -0.25em 1em white, 0.25em -0.25em 1em white, -0.25em 0.25em 1em white; 
 }
 #audioplayer .secIcon{
     height:60%;
     width:auto;
-    background-color:lightgray;
+    /* background-color:lightgray; */
     transition:all 0.5s ease;
     border-radius: 50%;
+    margin-top:15%;
 }
 #audioplayer .enabled{
-    background-color:white;
-    box-shadow: 0.5em 0.5em 3em white, -0.5em -0.5em 3em white, 0.5em -0.5em 3em white, -0.5em 0.5em 3em white; 
+    background-color:white !important;
+    /* background-color:rgba(255,255,255,0.2); */
+    border: 0.1em solid crimson;
+    box-shadow: inset 0.25em 0.25em 1em white, -0.25em -0.25em 1em white, 0.25em -0.25em 1em white, -0.25em 0.25em 1em white; 
+    /* box-shadow: 0.25em 0.25em 1em white, -0.25em -0.25em 1em white, 0.25em -0.25em 1em white, -0.25em 0.25em 1em white;  */
 }
 #audioplayer button{
     height:4em;
