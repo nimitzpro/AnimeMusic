@@ -16,7 +16,7 @@ class SearchSong extends React.Component{
 
 handleOnClick = (i) =>{
   let songData = this.state.songData;
-  this.props.sendToApp(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i,false);
+  this.props.sendToApp(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,false,songData[i]._id);
 }
 
 all = (e) =>{
@@ -30,7 +30,7 @@ all = (e) =>{
         {/* <audio controls><source src={key.url}></source></audio> */}
         <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
         </td>
-    <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type}</td></tr>
+    <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
   );
   })}
   </table>;
@@ -64,7 +64,7 @@ onChange = (e) => {
         {/* <audio controls><source src={key.url}></source></audio> */}
         <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
       </td>
-      <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type}</td></tr>
+      <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
     })}
     </table>
@@ -100,7 +100,7 @@ onSubmit = (e) =>{
           {/* <audio controls><source src={key.url}></source></audio> */}
           <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
       </td>
-      <td>{key.title}</td><td>{key.artist}</td><td>{key.anime}</td><td>{key.type}</td></tr>
+      <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
     })}
     </tbody>

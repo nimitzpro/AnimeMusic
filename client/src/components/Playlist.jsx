@@ -39,7 +39,7 @@ class Playlist extends Component{
             let key = result.data.songs[i];
             songList.push(<tr key={key._id} id={key._id}>
             <td><button onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)}><img src={play} alt='' /></button></td>
-            <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type}</td></tr>);
+            <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>);
         }
         // console.log(songList);
         let songs = <React.Fragment><h2>{result.data.name}</h2>

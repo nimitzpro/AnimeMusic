@@ -5,6 +5,8 @@ import pause from "../assets/pause.svg";
 import shuffle from "../assets/shuffle.png";
 import skipBack from "../assets/skipBack.svg";
 import skip from "../assets/skip.svg";
+import replay from "../assets/replay.svg";
+import replay1 from "../assets/replay1.svg";
 import {Link} from 'react-router-dom';
 
 let audio = new Audio();
@@ -21,7 +23,8 @@ export default class extends Component{
             button: play,
             songTime: '0:00',
             songLength:'0:00',
-            repeat: true, //false: Stop after song finishes, true: Continue to next song,
+            repeat: 1, //0: Stop after song finishes, 1: Continue to next song, 2: Repeat same song
+            replayIcon:replay,
             shuffle: false, //, false: Ignore, true: Play random song in list
             linkIsActive: ["activeLink","disabled-link"]
         }
@@ -41,8 +44,18 @@ export default class extends Component{
         });
         console.log("Shuffle :",this.state.shuffle);
     }
-    repeatState = async (i) =>{
-        await this.setState({repeat:i});
+    repeatState = async () =>{
+        let rep = this.state.repeat;
+        rep !== 2 ? rep++ : rep = 0; 
+        await this.setState({ repeat: rep }, () => {
+            if(rep === 0 || rep === 1){
+                document.getElementById('repeatIcon').classList.toggle('enabled');
+                this.setState({replayIcon:replay});
+            }
+            else{
+                this.setState({replayIcon:replay1})
+            }
+        });
         console.log("Repeat :",this.state.repeat);
     }
 
@@ -121,8 +134,15 @@ export default class extends Component{
             // const continuePlaying = true; // Change to stop/repeat song only/repeat playlist/shuffle button
             let repeat = this.state.repeat;
             let shuffle = this.state.shuffle;
-            if(repeat){
-                this.props.playNextSong(shuffle)
+            if(repeat === 1){
+                this.props.playNextSong(shuffle);
+            }
+            else if(repeat === 2){
+                audio.currentTime = 0;
+                audio.play();
+            }
+            else{
+                console.log("Audio Stopped.")
             }
         }
 
@@ -133,7 +153,7 @@ export default class extends Component{
     {/* <marquee behaviour="slide" scrolldelay="10"> */}
     <div id="songinfo" className={this.state.linkIsActive[1]}>
     <Link to="/currentplaylist">
-    <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type}</span>
+    <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type} {this.props.typeNumber}</span>
     </Link>
     </div>
     {/* </marquee> */}
@@ -143,7 +163,7 @@ export default class extends Component{
     <button id="audiobutton" onClick={this.skipBackward}><img className="icon secIcon" src={skipBack} alt='' /></button>
     <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon mainIcon" src={this.state.button} alt='' /></button>
     <button id="audiobutton" onClick={this.skipForward}><img className="icon secIcon" src={skip} alt='' /></button>
-    <button id="audiobutton" onClick={this.state.repeat ? () => this.repeatState(false) : () => this.repeatState(true)}><img className="icon secIcon" src={shuffle} alt='' /></button>
+    <button id="audiobutton" onClick={this.repeatState}><img className="icon secIcon enabled" id="repeatIcon" src={this.state.replayIcon} alt='' /></button>
     <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
     </div>
         <div id="links">

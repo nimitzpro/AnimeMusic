@@ -11,7 +11,8 @@ const SongSchema = new Schema(
     type: {
         type: String,
         enum: ['Opening','Ending','Insert']
-    }
+    },
+    typeNumber:Number
 },{
     versionKey: false
 }

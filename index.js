@@ -94,6 +94,7 @@ app.post('/submit',async (req,res)=>{
         artist: req.body.artist,
         anime: req.body.anime,
         type: req.body.type,
+        typeNumber: req.body.typeNumber,
         season: req.body.season
     });
     try{
@@ -143,6 +144,11 @@ app.post('/createplaylist', async (req,res)=>{
         res.json({message:err});
         console.log(err);
     }
+});
+
+// Update song 
+app.patch('/updatesongs',async (req,res)=>{
+    await Song.updateMany({}, {$set:{typeNumber:1}}, options = {upsert:true});
 });
 
 app.listen(PORT, () => console.log("App listening on port "+PORT));
