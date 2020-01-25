@@ -1,15 +1,23 @@
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
+// const axios = require('axios');
+// const fileUpload = require('express-fileupload');
+const multer = require('multer');
 const PORT = process.env.port || 4000;
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Song = require('./models/Song');
 const Playlist = require('./models/Playlist');
-const Anime = require('./models/Anime');
+// const Anime = require('./models/Anime');
 const DirectoryName = process.cwd().toString()+"/music/";
 const auth = require('./auth');
+
+// app.use(fileUpload({
+//     createParentPath: true
+// }));
+
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -86,6 +94,30 @@ app.get('/search/:searchType/:query', async (req,res)=>{
 //     }
 // });
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+    cb(null, 'music')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname );
+  }
+});
+
+var upload = multer({ storage: storage }).single('file');
+
+// Submission of new song (file)
+app.post('/submitSong',async (req,res)=>{
+    // console.log(req.files);
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err)
+        } else if (err) {
+            return res.status(500).json(err)
+        }
+        console.log(req.file.originalname, req.body.title);
+   return res.status(200).send(req.file.originalname);
+ });
+});
 // Submission of new song
 app.post('/submit',async (req,res)=>{
     const song = new Song({
@@ -99,11 +131,11 @@ app.post('/submit',async (req,res)=>{
     });
     try{
         const songSaved = await song.save();
-        res.send(songSaved);
+        res.status(200).send(songSaved);
         console.log(songSaved);
     }
     catch(err){
-        res.json({message:err});
+        res.status(500).json({message:err});
         console.log(err);
     }
 });
@@ -147,8 +179,8 @@ app.post('/createplaylist', async (req,res)=>{
 });
 
 // Update song 
-app.patch('/updatesongs',async (req,res)=>{
-    await Song.updateMany({}, {$set:{typeNumber:1}}, options = {upsert:true});
-});
+// app.patch('/updatesongs',async (req,res)=>{
+//     await Song.updateMany({}, {$set:{typeNumber:1}}, options = {upsert:true});
+// });
 
 app.listen(PORT, () => console.log("App listening on port "+PORT));

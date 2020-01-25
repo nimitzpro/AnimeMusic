@@ -5,15 +5,19 @@ export default class extends Component{
     constructor(props){
         super(props);
         this.state = {
-            url:'',
+            url:undefined,
             title:'',
             artist:'',
             anime:'',
-            type:'',
-            typeNumber:'',
+            type:'Opening',
+            typeNumber:'1',
             season:'',
             form:''
         }
+    }
+
+    handleMusicFile = (e) =>{
+        this.setState({url:e.target.files[0]})
     }
 
     onChange = (e) => {
@@ -22,17 +26,26 @@ export default class extends Component{
 
     onSubmit = (e) =>{
         e.preventDefault();
-        const url = this.state.url;
+        const url = this.state.url.name;
         const title = this.state.title;
         const artist = this.state.artist;
         const anime = this.state.anime;
         const season = this.state.season;
         const type = this.state.type;
         const typeNumber = this.state.typeNumber;
-        Axios.post('/submit',{url,title,artist,anime,season,type,typeNumber})
+        const data = new FormData();
+        data.append('file', this.state.url);
+        Axios.post('/submitSong',data)
         .then((result)=>{
+            if(result.status === 200){
+            Axios.post('/submit',{url,title,artist,anime,season,type,typeNumber})
+            .then((result)=>{
             this.form();
-            this.setState({form:<React.Fragment>{this.state.form}<br/>Song added to DB</React.Fragment>});
+            if(result.status === 200){
+                this.setState({form:<React.Fragment>{this.state.form}<br/>Song added to DB</React.Fragment>});
+            }
+            });
+        }
         });
     }
 
@@ -49,7 +62,7 @@ export default class extends Component{
             <option value="Insert">Insert</option>
         </select>
         <input min="1" placeholder="OP/ED/IN Number" type="number" name="typeNumber" onChange={this.onChange}></input><br/>
-        <input type="file" name="url" onChange={this.onChange}/>
+        <input type="file" name="url" onChange={this.handleMusicFile}/>
     <input type="submit" value="Send" id="button"></input></form></React.Fragment>});
     }
 
