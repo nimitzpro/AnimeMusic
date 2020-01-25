@@ -26,6 +26,9 @@ export default class extends Component{
 
     onSubmit = (e) =>{
         e.preventDefault();
+        // let updateName = this.state.url;
+        // updateName.name = Date.now() + updateName.name;
+        // this.setState({url:updateName});
         const url = this.state.url.name;
         const title = this.state.title;
         const artist = this.state.artist;
@@ -43,6 +46,9 @@ export default class extends Component{
             this.form();
             if(result.status === 200){
                 this.setState({form:<React.Fragment>{this.state.form}<br/>Song added to DB</React.Fragment>});
+            }
+            else{
+                this.setState({form:<React.Fragment>{this.state.form}<br/>Failed to add song to DB</React.Fragment>})
             }
             });
         }

@@ -41,7 +41,7 @@ class Playlist extends Component{
             <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>);
         }
         // console.log(songList);
-        let songs = <React.Fragment><h2>{result.data.name}</h2>
+    let songs = <React.Fragment><h2>{result.data.name}</h2><h3>Created by : {result.data.createdBy.username}</h3>
         {/* <button onClick={() => console.log("Shuffle!")} style={{marginRight:2+"em"}}><img src={shuffle} alt='' /></button>    */}
         <button onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /></button><br />
         <table>

@@ -117,7 +117,14 @@ export default class extends Component{
         // }
         audio.onplaying = () => {
             let musicpoint = document.getElementById("musicpoint");
-            let songLength = (audio.duration / 60 | 0)+":"+(audio.duration % 60 | 0);
+            let songLengthSecs = "0";
+            if((audio.duration % 60 | 0) < 10){
+                songLengthSecs = "0"+(audio.duration % 60 | 0);
+            }
+            else{
+                songLengthSecs = (audio.duration % 60 | 0);
+            }
+            let songLength = (audio.duration / 60 | 0)+":"+songLengthSecs;
             this.setState({songLength:songLength});
             setInterval(()=>{
                 let len = (audio.currentTime / audio.duration) * 100;

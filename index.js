@@ -148,14 +148,14 @@ app.delete('/delete/:title',async(req,res)=>{
 
 // Find playlists
 app.get('/findplaylists', async (req,res)=>{
-    const playlists = await Playlist.find({});
+    const playlists = await Playlist.find({"private":"false"});
     res.send(playlists);
     console.log(playlists);
 });
 
 // Find and populate specific playlist
 app.get('/playlist/:_id', async (req,res) =>{
-    const playlist = await Playlist.findOne({"_id":req.params._id}).populate('songs');
+    const playlist = await Playlist.findOne({"_id":req.params._id}).populate('songs').populate('createdBy', 'username');
     res.send(playlist);
     console.log(playlist);
 });
@@ -164,6 +164,7 @@ app.get('/playlist/:_id', async (req,res) =>{
 app.post('/createplaylist', async (req,res)=>{
     const playlist = new Playlist({
         name:req.body.name,
+        createdBy:req.body.uid,
         private:req.body.private,
         songs:req.body.songs
     })
