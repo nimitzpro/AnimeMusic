@@ -48,7 +48,7 @@ export default class extends Component{
         let rep = this.state.repeat;
         rep !== 2 ? rep++ : rep = 0; 
         await this.setState({ repeat: rep }, () => {
-            if(rep === 0 || rep === 1){
+            if(rep <= 1){
                 document.getElementById('repeatIcon').classList.toggle('enabled');
                 this.setState({replayIcon:replay});
             }
