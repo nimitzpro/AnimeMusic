@@ -15,7 +15,6 @@ class Playlist extends Component{
 
     changePlaylistAndPlay = async (songData,i,songKey) =>{
         this.props.sendSongData(songData,i,songKey);
-        // this.props.playSong(i,songKey);
     }
     
     kek = () =>{

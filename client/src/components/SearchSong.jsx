@@ -26,9 +26,9 @@ all = (e) =>{
     <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
     {result.data.map((key,index) =>{
       return(
-      <tr key={key._id}><td>
+      <tr key={key._id} id={key._id}><td>
         {/* <audio controls><source src={key.url}></source></audio> */}
-        <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
+        <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
         </td>
     <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
   );
@@ -40,6 +40,9 @@ all = (e) =>{
 
   componentDidMount = (e) =>{
      this.all();
+  }
+  componentDidUpdate = (e) =>{
+    this.props.checkForCurrentlyPlaying(this.state.songData);
   }
 
 handleChange = (e) =>{
@@ -60,9 +63,9 @@ onChange = (e) => {
       <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
       {result.data.map((key,index) =>{
         return(
-      <tr key={key._id}><td>
+      <tr key={key._id} id={key._id}><td>
         {/* <audio controls><source src={key.url}></source></audio> */}
-        <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
+        <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
       </td>
       <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
@@ -96,9 +99,9 @@ onSubmit = (e) =>{
       <tbody>
       {result.data.map((key,index) =>{
         return(
-        <tr key={key._id}><td>
+        <tr key={key._id} id={key._id}><td>
           {/* <audio controls><source src={key.url}></source></audio> */}
-          <button onClick={() => this.handleOnClick(index)}><img src={play} alt='' /></button>
+          <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
       </td>
       <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
@@ -108,7 +111,10 @@ onSubmit = (e) =>{
       this.setState({songs:songs});
   }).catch(err=>{this.all()});
 }
-    
+  
+changePlaylistAndPlay = async (songData,i,songKey) =>{
+  this.props.sendSongData(songData,i,songKey);
+}  
     render(){
         return(
             <div className="search-container">
