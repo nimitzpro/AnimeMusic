@@ -124,3 +124,30 @@ aside{
 aside:hover{
   opacity:1;
 }
+.settings{
+  position:relative;
+}
+.settings img{
+  margin-top:40%;
+}
+.settings img:hover{
+  transform: scale(1.2);
+}
+.settings .dialogbox{
+  display:none;
+  background-color:white;
+  position:absolute;
+  top:0;
+  left:0;
+  text-align:center;
+  list-style-type: none;
+  z-index:5;
+  width:300%;
+  padding-left:0;
+}
+.settings .dialogbox li{
+  padding:0.5em 0;
+}
+.settings .dialogbox li:hover{
+  background-color: lightcoral;
+}

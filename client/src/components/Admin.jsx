@@ -10,12 +10,12 @@ export default class extends Component{
         super(props);
         this.state = {
             login: "Register",
-            content: <Login sendPlaylist={this.sendPlaylistAdmin} sendPlaylistDetails={this.sendPlaylistDetails} sendUid={this.sendUid} isSignedIn={this.props.isSignedIn} accountData={this.props.accountData}/>
+            content: <Login  sendPlaylist={this.sendPlaylistAdmin} sendPlaylistDetails={this.sendPlaylistDetails} sendUid={this.sendUid} isSignedIn={this.props.isSignedIn} accountData={this.props.accountData}/>
         }
     }
 
-    sendPlaylistDetails = (pName,pPrivate) =>{
-        this.props.sendPlaylistDetails(pName,pPrivate);
+    sendPlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails) =>{
+        this.props.sendPlaylistDetails(pName,pPrivate,pSongs,pID,songsDetails);
     }
 
     sendPlaylistAdmin = (_id) =>{

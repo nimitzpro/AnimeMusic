@@ -156,7 +156,7 @@ app.get('/findplaylists1', async (req,res)=>{
 
 // Delete playlist by id
 app.delete('/playlist/:_id', async (req,res)=>{
-    await Playlist.deleteOne({_id:req.params._id});
+    await Playlist.deleteOne({_id:req.params._id}).then(res.sendStatus(200));
     console.log(req.params._id+" deleted.");
 })
 
@@ -167,11 +167,24 @@ app.get('/findplaylists', async (req,res)=>{
     console.log(playlists);
 });
 
+// Find specific playlist to update
+app.get('/playlisttoupdate/:_id', async (req,res) =>{
+    const playlist = await Playlist.findOne({"_id":req.params._id}).populate('createdBy', 'username');
+    res.send(playlist);
+    console.log(playlist);
+});
+
+
 // Find and populate specific playlist
 app.get('/playlist/:_id', async (req,res) =>{
     const playlist = await Playlist.findOne({"_id":req.params._id}).populate('songs').populate('createdBy', 'username');
     res.send(playlist);
     console.log(playlist);
+});
+
+// Update playlist songs
+app.patch('/updateplaylist', async (req,res)=>{
+    await Playlist.findOneAndUpdate({_id:req.body._id}, {$set:{songs:req.body.songs}}, options = {upsert:true}).then(res.sendStatus(200));
 });
 
 // Create playlist

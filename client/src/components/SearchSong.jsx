@@ -43,6 +43,9 @@ all = (e) =>{
      this.props.sendPlaylist("Search");
      this.all();
      this.props.checkForCurrentlyPlaying(this.state.songData);
+    //  if(this.props.isUpdatingPlaylist){
+    //    this.props.loopThroughExistingSongs();
+    //  }
   }
   componentDidUpdate = (e) =>{
     this.props.checkForCurrentlyPlaying(this.state.songData);

@@ -37,7 +37,9 @@ class App extends React.Component{
       pPrivate:undefined, // Playlist is private or not
       pSongs:[], // List of song keys to be sent to DB
       pList:undefined, // pList is the component which actually renders on screen
-      songList:[] // list of song titles/anime names displayed in pList
+      songList:[], // list of song titles/anime names displayed in pList
+      pID:undefined, // ID of playlist to be updated
+      isUpdatingPlaylist:undefined // Whether playlist is being updated or is new playlist
     }
   }
 
@@ -45,16 +47,21 @@ class App extends React.Component{
 //   this.handleSourceChange = childFunc;
 // }
 
-receivePlaylistDetails = (pName,pPrivate) =>{
+receivePlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails) =>{
+  if(pSongs){
+    this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,pSongs:pSongs,isUpdatingPlaylist:true,pID:pID},()=>this.loopThroughExistingSongs(songsDetails));
+  }
+  else{
+    this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,isUpdatingPlaylist:false},()=>this.refreshAside());
+  }
   // console.log("Details received", pName, pPrivate)
-this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate},()=>this.refreshAside());
 }
 
 refreshAside = (title,anime) =>{
   console.log("title",title)
-  let songList = this.state.songList;
-  if(title !== undefined){
-  songList.push({title,anime});
+    let songList = this.state.songList;
+    if(title !== undefined){
+    songList.push({title,anime});
   }
   let res = []
   if(this.state.songList.length > 0){
@@ -65,7 +72,20 @@ refreshAside = (title,anime) =>{
   res.push(<li onClick={()=>this.removeSongFromPlaylist(a)}>{this.state.songList[i].title} - {this.state.songList[i].anime}</li>);
   }
 }
+if(this.state.isUpdatingPlaylist){
+  this.setState({pList:<aside><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.updatePlaylistToDB}>Update Playlist</button></aside>});
+}
+else{
   this.setState({pList:<aside><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.addPlaylistToDB}>Submit Playlist</button></aside>});
+}
+}
+
+loopThroughExistingSongs = (songsDetails) =>{
+  let songData = songsDetails;
+  for(var songIndex=0;songIndex < songData.length;songIndex++){
+    songData[songIndex].season ? songData[songIndex].anime = songData[songIndex].anime+" "+songData[songIndex].season : songData[songIndex].anime = songData[songIndex].anime;
+    this.refreshAside(songData[songIndex].title,songData[songIndex].anime);
+  }
 }
 
 removeSongFromPlaylist = (i) =>{
@@ -74,6 +94,21 @@ removeSongFromPlaylist = (i) =>{
   pSongs = pSongs.slice(0, i).concat(pSongs.slice(i+1, pSongs.length));
   songList = songList.slice(0, i).concat(songList.slice(i+1, songList.length));
   this.setState({pSongs:pSongs,songList:songList},()=>this.refreshAside());
+}
+
+updatePlaylistToDB = () =>{
+  const songs = this.state.pSongs;
+  const _id = this.state.pID;
+  Axios.patch('/updateplaylist',{_id,songs}).then((response)=>{
+    if(response.status === 200){
+      this.setState({pList:<aside><h3>Playlist {this.state.pName} updated!</h3></aside>},()=>{
+      setTimeout(()=>{
+        // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
+        window.location.reload(true);
+      },3000);
+    });
+    }
+  });
 }
 
 addPlaylistToDB = () =>{
@@ -326,7 +361,7 @@ render(){
           {/* {this.state.searching} */}
 
           
-            <Route exact path="/" render={() => <React.Fragment><SearchSong sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/><UploadSong /><DeleteSong /></React.Fragment>} />
+            <Route exact path="/" render={() => <React.Fragment><SearchSong isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route exact path="/signin" render={() => <Admin value={admin} sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/>} />
             <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} sendPlaylist={this.receivePlaylist} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
             <Route path="/currentplaylist" render={() => <Playlist _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} />
