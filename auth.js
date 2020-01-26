@@ -54,6 +54,7 @@ auth.delete('/delete/:_id', async (req,res) =>{
 // Add playlist to account
 auth.patch('/addplaylist', async (req,res)=>{
     await Account.findOneAndUpdate({_id:req.body._id}, {$push:{playlists:req.body.playlist}}, options = {upsert:true});
+    res.sendStatus(200);
     console.log("Added playlist :",req.body.playlist);
 });
 

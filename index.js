@@ -146,6 +146,20 @@ app.delete('/delete/:title',async(req,res)=>{
     console.log(req.params.title+" deleted.");
 });
 
+
+// Find all playlists ---///
+app.get('/findplaylists1', async (req,res)=>{
+    const playlists = await Playlist.find({});
+    res.send(playlists);
+    console.log(playlists);
+});
+
+// Delete playlist by id
+app.delete('/playlist/:_id', async (req,res)=>{
+    await Playlist.deleteOne({_id:req.params._id});
+    console.log(req.params._id+" deleted.");
+})
+
 // Find playlists
 app.get('/findplaylists', async (req,res)=>{
     const playlists = await Playlist.find({"private":"false"});
@@ -165,12 +179,12 @@ app.post('/createplaylist', async (req,res)=>{
     const playlist = new Playlist({
         name:req.body.name,
         createdBy:req.body.uid,
-        private:req.body.private,
+        private:req.body.privacy,
         songs:req.body.songs
     })
     try{
         playlistSaved = await playlist.save();
-        res.send(playlistSaved);
+        res.status(200).send(playlistSaved);
         console.log(playlistSaved);
     }
     catch(err){

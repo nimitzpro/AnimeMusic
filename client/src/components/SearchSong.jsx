@@ -26,9 +26,10 @@ all = (e) =>{
     <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
     {result.data.map((key,index) =>{
       return(
-      <tr key={key._id} id={key._id}><td>
+      <tr key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+        <td>
         {/* <audio controls><source src={key.url}></source></audio> */}
-        <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
+        <img src={play} alt='' />
         </td>
     <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
   );
@@ -63,9 +64,9 @@ onChange = (e) => {
       <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
       {result.data.map((key,index) =>{
         return(
-      <tr key={key._id} id={key._id}><td>
+      <tr key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><td>
         {/* <audio controls><source src={key.url}></source></audio> */}
-        <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
+        <img src={play} alt='' />
       </td>
       <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
@@ -99,9 +100,9 @@ onSubmit = (e) =>{
       <tbody>
       {result.data.map((key,index) =>{
         return(
-        <tr key={key._id} id={key._id}><td>
+        <tr key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><td>
           {/* <audio controls><source src={key.url}></source></audio> */}
-          <button onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}><img src={play} alt='' /></button>
+          <img src={play} alt='' />
       </td>
       <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
     );

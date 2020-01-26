@@ -43,25 +43,82 @@ footer{
   padding: 0.5em;
   background-color: rgb(255, 255, 255);
 }
-button img{
-  height: 2em;
+tr td > img{
+  height: 1em;
   width: auto;
 }
-#playlist button, table button{
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  outline: none;
+#playlist div{
+  display:inline-block;
+}
+#playlist div:hover h2{
+  color:crimson;
+  text-decoration: underline;
+  text-shadow: white 2em 0 5em;
+}
+#playlist img, #playlist h2{
+  padding:0 0;
+  margin:0 0;
+  transition:all 0.5s ease;
+  cursor:pointer;
+  display:inline-block;
+}
+#playlist div> img{
+  padding-right:0.5m;
+  height:1em;
 }
 table tr + tr:hover{
   background-color:rgba(255, 255, 255, 0.781);
   /* border:0.1em solid black; */
 }
 table tr{
+  cursor:pointer;
   transition:all 0.5s ease-in-out;
 }
 .currentlyPlayingSong{
   background-color:rgba(255, 255, 255, 0.781);
+}
+
+/* tr button{
+  display:inline;
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+} */
+
+aside h3{
+  text-align:center;
+}
+aside ul li{
+  margin: 0.5em 0;
+  cursor:pointer;
+}
+aside li:hover{
+  text-decoration: line-through;
+}
+aside button{
+  display:block;
+  width:auto;
+  margin:0 auto;
+}
+aside{
+  position:fixed;
+  right:0;
+  top:0;
+  width:20%;
+  text-align:left;
+  padding:0.25em 0.75em 0.25em 0.75em;
+  background-color:white;
+  border-bottom:0.3em solid rgba(0,0,0,0.4);
+  border-left:0.3em solid rgba(0,0,0,0.4);
+  color:crimson;
+  opacity: 0.85;
+  transition:all 0.5s ease;
+  font-size: 0.75em;
+}
+aside:hover{
+  opacity:1;
 }

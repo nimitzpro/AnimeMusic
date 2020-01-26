@@ -10,6 +10,8 @@ constructor(props){
         email:'',
         pass:'',
         content:'',
+        pName:'',
+        pPrivate:true,
         logHorizon:<section>
         <h1>Login</h1>
         <form onSubmit={this.onSubmit} id="signInForm" method="post">
@@ -17,7 +19,15 @@ constructor(props){
             <h2>Password : </h2><input name="pass" type="password" onChange={this.onChange}></input><br />
             <input type="submit" value="Login" id="button"></input>
         </form>
-        </section>
+        </section>,
+        createPlaylist:<React.Fragment>
+        <h1>Create a New Playlist</h1>
+        <form onSubmit={this.addingPlaylist}>
+            <h2>Playlist Name : </h2><input name="pName" onChange={this.onChange}></input><br />
+            <h2>Private Playlist(unticked is public) : </h2><input name="pPrivate" type="checkbox" defaultChecked onClick={this.togglePrivate}></input><br />
+            <input type="submit" value="Add Songs" id="button"></input>
+        </form>
+        </React.Fragment>
     }
 }
 
@@ -32,9 +42,10 @@ componentDidMount(){
             key.playlists.map((element) => {
         return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
     })}</table></span></React.Fragment>
-    this.setState({content:response});
+
+    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}</React.Fragment>});
 }
-//         let email = this.props.email;
+//         let email = this.props.email;{this.state.createPlaylist}
 //         let pass = this.props.pass;
 //         axios.post("/signin/login",{email,pass})
 //     .then((result) => {
@@ -55,6 +66,21 @@ componentDidMount(){
         this.setState({content:this.state.logHorizon});
     }
 }
+
+addingPlaylist = (e) =>{
+    e.preventDefault();
+    this.props.sendPlaylistDetails(this.state.pName,this.state.pPrivate);
+}
+
+togglePrivate = () =>{
+    if(this.state.pPrivate){
+        this.setState({pPrivate:false});
+    }
+    else{
+        this.setState({pPrivate:true});
+    }
+}
+
 
 onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -80,7 +106,7 @@ onSubmit = (e) =>{
     {key.playlists.map((element) => {
         return(<tr key={key._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td></tr>);
     })}</table></span></React.Fragment>})}</React.Fragment>;
-        this.setState({content:response},()=>{
+        this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}</React.Fragment>,},()=>{
             // console.log(result.data[0]);
             this.props.sendUid(result.data[0]);
         });
