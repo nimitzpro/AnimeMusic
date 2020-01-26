@@ -112,6 +112,24 @@ export default class extends Component{
     }
 
     render(){
+
+        // document.addEventListener('keydown',(x)=>{
+        //     if(x.keyCode == 37 || x.keyCode == 8){
+        //         this.skipBackward();
+        //     }
+        //     else if(x.keyCode == 39 || x.keyCode == 13){
+        //         this.skipForward();
+        //     }
+        //     else if(x.keyCode == 32){
+        //         if(this.state.playing){
+        //             this.pauseSong();
+        //         }
+        //         else{
+        //             this.playSong();
+        //         }
+        //     }
+        // });
+
         // audio.onpause = () =>{
         //     clearInterval(timer?, 1000);
         // }

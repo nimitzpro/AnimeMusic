@@ -76,6 +76,8 @@ table tr{
 }
 .currentlyPlayingSong{
   background-color:rgba(255, 255, 255, 0.781);
+  color:crimson;
+  font-weight:bolder;
 }
 
 /* tr button{
@@ -112,8 +114,8 @@ aside{
   text-align:left;
   padding:0.25em 0.75em 0.25em 0.75em;
   background-color:white;
-  border-bottom:0.3em solid rgba(0,0,0,0.4);
-  border-left:0.3em solid rgba(0,0,0,0.4);
+  border-bottom:0.3em solid rgb(0, 0, 0);
+  border-left:0.3em solid rgb(0, 0, 0);
   color:crimson;
   opacity: 0.85;
   transition:all 0.5s ease;

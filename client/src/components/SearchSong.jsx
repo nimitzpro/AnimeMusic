@@ -40,7 +40,9 @@ all = (e) =>{
 }
 
   componentDidMount = (e) =>{
+     this.props.sendPlaylist("Search");
      this.all();
+     this.props.checkForCurrentlyPlaying(this.state.songData);
   }
   componentDidUpdate = (e) =>{
     this.props.checkForCurrentlyPlaying(this.state.songData);

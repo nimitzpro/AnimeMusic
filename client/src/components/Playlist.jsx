@@ -25,6 +25,7 @@ class Playlist extends Component{
       
     componentDidMount(){
         let _id = this.props._id;
+        this.props.sendPlaylist(_id);
         console.log("ID :", _id)
         Axios.get('/playlist/'+_id,{}).then((result) =>{
         console.log(result);  

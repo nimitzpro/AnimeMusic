@@ -107,6 +107,7 @@ receiveUid = (accountData) =>{
 }
 
 sendSongData = async (songData, songIndex,songKey) =>{
+  if(!this.state.addingToPlaylist){
   // this.handleSourceChange();
   await this.setState({songData:songData,songIndex:songIndex},()=>{
     this.setState({playlistPlayingID:this.state._id});
@@ -114,6 +115,16 @@ sendSongData = async (songData, songIndex,songKey) =>{
     // this.audioInfo(k.url,k.title,k.artist,k.anime,k.season,k.type,this.state.songIndex,true,songKey);
     this.playSong(this.state.songIndex,songKey)
   });
+  }
+else{
+  songData[songIndex].season ? songData[songIndex].anime = songData[songIndex].anime+" "+songData[songIndex].season : songData[songIndex].anime = songData[songIndex].anime;
+  let songs = this.state.pSongs;
+  if(!songs.includes(songKey)){
+    songs.push(songKey);
+    console.log(songData[songIndex].title, "added to", this.state.pName);
+    this.refreshAside(songData[songIndex].title,songData[songIndex].anime);
+  }
+}
   // this.setState({playlistPlaying:true});
 }
 
@@ -139,7 +150,6 @@ setAudioPlayerLink3 = (childMethod) =>{
 }
 
 audioInfo = (url,title,artist,anime,season,type,typeNumber,songIndex,calledFromPlayer,songKey) =>{
-  if(!this.state.addingToPlaylist){
     if(calledFromPlayer && anime){
       let finishedSongData = songIndex;
       let playedSongsCache = this.state.playedSongsCache;
@@ -158,14 +168,6 @@ audioInfo = (url,title,artist,anime,season,type,typeNumber,songIndex,calledFromP
     console.log("audioInfo:", url,title,artist,anime,season,type,songIndex,songKey);
     this.setState({url:url, title:title, artist:artist, type:type,typeNumber:typeNumber, calledFromPlayer:calledFromPlayer},() => (this.setAudioPlayerLink(this.state.playlistPlayingID,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
     // this.setState({songKey:songKey},()=>
-  }
-  else{
-    season ? anime = anime+" "+season : anime = anime;
-    let songs = this.state.pSongs;
-    songs.push(songKey);
-    console.log(title, "added to", this.state.pName);
-    this.refreshAside(title,anime);
-  }
 }
 
 setChildMethod = (childMethod) => {
@@ -201,7 +203,7 @@ handleNextSong = (shuffle) =>{
 
 handlePrevSong = () =>{
   let playedSongsCache = this.state.playedSongsCache;
-  if(playedSongsCache.length > 1){
+  if(playedSongsCache.length> 1){
     playedSongsCache.pop();
     let k = playedSongsCache.pop();
     this.playSong(k,this.state.songData[k]._id);
@@ -265,12 +267,14 @@ playSong = async (i,songKey) =>{
     }
   }
   this.setState({songKey:songKey},()=>{
+    if(this.state.playlistPlayingID === this.state._id){
     try {
       document.getElementById(`${this.state.songKey}`).setAttribute('class',`currentlyPlayingSong`)
     }
     catch(err){
       console.log("");
     }
+  }
   });
   let songData = await this.state.songData;
   console.log("TRIGGERED",songData);
@@ -278,7 +282,7 @@ playSong = async (i,songKey) =>{
     console.log("in playsong 2 :",i,songKey)
     this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,true,songKey);
     this.setState({songIndex:i});
-      // this.handleOnClick(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i)
+      // this.handleOnClickplaylistSongData(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i)
       // this.setState({songIndex:i});
   }
 }
@@ -322,10 +326,10 @@ render(){
           {/* {this.state.searching} */}
 
           
-            <Route exact path="/" render={() => <React.Fragment><SearchSong sendSongData={this.sendSongData} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/><UploadSong /><DeleteSong /></React.Fragment>} />
+            <Route exact path="/" render={() => <React.Fragment><SearchSong sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/><UploadSong /><DeleteSong /></React.Fragment>} />
             <Route exact path="/signin" render={() => <Admin value={admin} sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/>} />
-            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
-            <Route path="/currentplaylist" render={() => <Playlist _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
+            <Route path="/playlist" render={() => <Playlist _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} sendPlaylist={this.receivePlaylist} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
+            <Route path="/currentplaylist" render={() => <Playlist _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} />
           <AudioPlayer url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} typeNumber={this.state.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.state.isSignedIn} username={(this.state.accountData) ? this.state.accountData.username : ''}/>
           <footer>
             <h3>2020 Alexander Stradnic &copy;</h3>
