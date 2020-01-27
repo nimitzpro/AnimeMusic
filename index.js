@@ -58,6 +58,10 @@ app.get('/search/:searchType/:query', async (req,res)=>{
                 songs = await Song.find({"title":{$regex: req.params.query, $options: 'i'}});
                 res.send(songs);
                 return;
+            case "playlist":
+                songs = await Playlist.find({"name":{$regex:req.params.query, $options: 'i'},"private":"false"}).populate('createdBy', 'username');
+                res.send(songs);
+                return;
         }
         }
     catch(err){
@@ -162,7 +166,7 @@ app.delete('/playlist/:_id', async (req,res)=>{
 
 // Find playlists
 app.get('/findplaylists', async (req,res)=>{
-    const playlists = await Playlist.find({"private":"false"});
+    const playlists = await Playlist.find({"private":"false"}).populate('createdBy','username');
     res.send(playlists);
     console.log(playlists);
 });
