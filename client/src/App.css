@@ -1,11 +1,20 @@
 .App{
-  background-image:linear-gradient(rgba(255, 255, 255, 0.657),rgba(255, 255, 255, 0.657));
+  /* background-image:linear-gradient(rgba(114, 255, 255, 0.657),rgba(42, 91, 255, 0.657)); */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.7),rgba(255, 255, 255, 0.7));
   font-size:1.75em;
+  margin-top:3.45em;
   margin-bottom: 4em;
+  /* width:100%; */
 }
+
+.search-container>p{
+  padding-top:2em;
+}
+
 table{
   display:inline-block;
   margin:1em auto;
+  /* width:100%; */
   border:0;
   border-collapse:collapse;
 }
@@ -13,9 +22,15 @@ table tr td{
   padding:0.5em 1em;
 }
 header{
-  width:60%;
-  margin: 0 auto;
-  padding:1em 0;
+  top:0;
+  width:100%;
+  background-color:rgba(255, 255, 255, 0.781);
+  margin: 0 0;
+  position:fixed;
+}
+header h1{
+  margin:0 0;
+  padding: 0.25em 0;
 }
 h1 a{
   color:black;
@@ -150,4 +165,62 @@ aside:hover{
 }
 .settings .dialogbox li:hover{
   background-color: lightcoral;
+}
+@media screen and (max-width:50em){
+  .App{
+    font-size:1em;
+    margin-bottom:4.8em;
+  }
+h2,h3,h5{
+    font-weight:500;
+}
+  header{
+    padding:0em 0;
+    margin:0 0;
+  }
+  h1{
+    display:block;
+  }
+  header h1 a{
+    display:block;
+    padding:0.5em 0;
+  }
+  table{
+    width:100%;
+    margin:0.2em 0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  /* table tr td:nth-last-child(1), table tr th:nth-last-child(1){
+    display:none !important; 
+  } */
+  .settings .dialogbox{
+    left:auto;
+    right:0 !important;
+  }
+}
+#mobileSearch{
+  font-weight:100;
+  list-style: none;
+  text-align: left;
+  padding:0 0;
+}
+#mobileSearch li{
+  margin:0em 1em;
+  padding:1em 0;
+}
+#mobileSearch li:not(:nth-last-child(1)){
+  border-bottom:0.1em solid black;
+}
+#mobileSearch li *{
+  margin: 0 0;
+  padding:0 0;
+}
+#mobileSearch li h3 + h3{
+  float:right;
+}
+
+.currentlyPlayingSongMobile{
+  color:crimson;
+  font-weight:bolder;
 }

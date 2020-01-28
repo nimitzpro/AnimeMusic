@@ -7,6 +7,7 @@ import skipBack from "../assets/skipBack.svg";
 import skip from "../assets/skip.svg";
 import replay from "../assets/replay.svg";
 import replay1 from "../assets/replay1.svg";
+import HOMEICON from '../assets/home.png';
 import {Link} from 'react-router-dom';
 
 let audio = new Audio();
@@ -189,6 +190,7 @@ export default class extends Component{
     <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon mainIcon" src={this.state.button} alt='' /></button>
     <button id="audiobutton" onClick={this.skipForward}><img className="icon secIcon" src={skip} alt='' /></button>
     <button id="audiobutton" onClick={this.repeatState}><img className="icon secIcon enabled" id="repeatIcon" src={this.state.replayIcon} alt='' /></button>
+    <button id="audiobutton" id="homeIcon"><Link to="/signin"><img className="icon secIcon" src={HOMEICON} alt='' /></Link></button>
     <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
     </div>
         <div id="links">

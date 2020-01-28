@@ -17,6 +17,12 @@ auth.post('/login', async (req,res)=>{
             res.sendStatus(404).send("Email or password incorrect.");
         }
         else{
+            console.log(result);
+            if(result[0].admin == true){
+                console.log("yes.")
+                // result.push({'react_admin':"<UploadSong /><DeleteSong />"});
+                console.log(result)
+            }
             res.send(result);
         }
     }   

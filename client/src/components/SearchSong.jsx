@@ -41,6 +41,7 @@ all = (searchType) =>{
   else{
     Axios.get('/all').then(result => {
       this.setState({songData:result.data});
+      if(!this.props.mobile){
       let songs = <table>
       <tr><th></th><th>Title</th><th>Artist(s)</th><th>Anime</th><th>Type</th></tr>
       {result.data.map((key,index) =>{
@@ -55,6 +56,18 @@ all = (searchType) =>{
     })}
     </table>;
     this.setState({songs:songs});
+  }
+  else{
+    let songs = <ul id="mobileSearch">
+    {result.data.map((key,index) =>{
+      return(
+      <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+      <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+    );
+    })}  
+    </ul>
+  this.setState({songs:songs});
+}
     });
   }
 }
@@ -88,6 +101,7 @@ onChange = (e) => {
   // get our form data out of state
     // console.log(searchType);
     Axios.get('/search/'+searchType+'/'+search, {}).then((result)=>{
+      if(!this.props.mobile){
       if(searchType === 'playlist'){
         let songs = <table>
           <thead><tr><th>Name</th><th>Length(songs)</th><th>Author</th></tr></thead>
@@ -119,6 +133,36 @@ onChange = (e) => {
         </table>
         this.setState({songs:songs});
       }
+    }
+    else{
+      if(searchType === 'playlist'){
+        let songs = <table>
+          <thead><tr><th>Name</th><th>Length(songs)</th><th>Author</th></tr></thead>
+          <tbody>
+            {result.data.map((key,index)=>{
+              return <tr key={key._id}>
+                <td><Link to="/playlist" className="link" onClick={() =>this.handlePlaylistClick(key._id)}>{key.name}</Link></td>
+                <td>{key.songs.length}</td>
+                <td>{key.createdBy.username}</td>
+              </tr>
+            })}
+          </tbody>
+        </table>
+      this.setState({songs:songs});
+      }
+      else{
+        this.setState({songData:result.data});
+        let songs = <ul id="mobileSearch">
+        {result.data.map((key,index) =>{
+          return(
+          <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+          <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+        );
+        })}  
+        </ul>
+      this.setState({songs:songs});
+    }
+    }
   }).catch(err=>{this.all(searchType)});
   // const searching  = this.state.searching;
   // Axios.get('/searching/'+search,{
@@ -140,6 +184,7 @@ onSubmit = (e) =>{
   const searchType = this.state.searchType;
     console.log(search);
     Axios.get('/search/'+searchType+'/'+search,{}).then((result)=>{
+      if(!this.props.mobile){
       if(searchType === 'playlist'){
         let songs = <table>
           <thead><tr><th>Name</th><th>Length(songs)</th><th>Author</th></tr></thead>
@@ -173,6 +218,36 @@ onSubmit = (e) =>{
     </table>
       this.setState({songs:songs});
     }
+  }
+  else{
+    if(searchType === 'playlist'){
+      let songs = <table>
+        <thead><tr><th>Name</th><th>Length(songs)</th><th>Author</th></tr></thead>
+        <tbody>
+          {result.data.map((key,index)=>{
+            return <tr key={key._id}>
+              <td><Link to="/playlist" className="link" onClick={() =>this.handlePlaylistClick(key._id)}>{key.name}</Link></td>
+              <td>{key.songs.length}</td>
+              <td>{key.createdBy.username}</td>
+            </tr>
+          })}
+        </tbody>
+      </table>
+    this.setState({songs:songs});
+    }
+    else{
+      this.setState({songData:result.data});
+      let songs = <ul id="mobileSearch">
+      {result.data.map((key,index) =>{
+        return(
+        <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+        <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+      );
+      })}  
+      </ul>
+    this.setState({songs:songs});
+  }
+  }
     }).catch(err=>{this.all(searchType)});
 } 
 
