@@ -32,6 +32,13 @@ auth.post('/login', async (req,res)=>{
     }
 });
 
+// Add admin
+auth.patch('/adminify/:_id',async (req,res)=>{
+    await Account.findOneAndUpdate({_id:req.params._id}, {$set:{admin:true}});
+    res.send(200);
+    console.log(req.params._id,"is an admin now.");
+});
+
 // Create account
 auth.post('/register', async (req,res)=>{
     const account = new Account({

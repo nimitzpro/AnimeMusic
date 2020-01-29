@@ -144,10 +144,16 @@ app.post('/submit',async (req,res)=>{
     }
 });
 
-// Delete song by title
-app.delete('/delete/:title',async(req,res)=>{
-    await Song.deleteOne({title:req.params.title});
-    console.log(req.params.title+" deleted.");
+// Delete song by id
+app.delete('/delete/:_id', async(req,res)=>{
+    try{
+        await Song.findByIdAndDelete({_id:req.params._id});
+        console.log(req.params._id+" deleted.");
+        res.status(200).send(req.params._id+" deleted.");
+    }
+    catch(err){
+        res.status(404).send("Couldn't delete song");
+    }
 });
 
 

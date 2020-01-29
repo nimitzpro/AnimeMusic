@@ -120,7 +120,7 @@ componentDidMount(){
             key.playlists.map((element) => {
                 return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
     })}</table></span></React.Fragment>
-    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}</React.Fragment>});
+    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><DeleteSong /></span> : ""}</React.Fragment>});
 }
 //         let email = this.props.email;{this.state.createPlaylist}
 //         let pass = this.props.pass;

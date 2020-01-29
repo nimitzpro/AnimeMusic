@@ -11,9 +11,9 @@ export default class extends Component{
     }
 
     form = (e) =>{
-        const form = <React.Fragment><h3>Delete Song by Name</h3>
+        const form = <React.Fragment><h3>Delete Song by ID</h3>
         <form onSubmit={this.onSubmit}>
-            <input name="title" onChange={this.onChange} placeholder="Song title"></input>
+            <input name="_id" onChange={this.onChange} placeholder="Song ID"></input>
             <input type="submit" value="Delete" id="button"></input>
         </form></React.Fragment>;
         this.setState({form:form});
@@ -25,11 +25,11 @@ export default class extends Component{
 
     onSubmit = (e) =>{
         e.preventDefault();
-        const title = this.state.title;
-        Axios.delete('/delete/'+title,{title})
+        const _id = this.state._id;
+        Axios.delete('/delete/'+_id,{_id})
         .then((result)=>{
             this.form();
-            this.setState({form:<React.Fragment>{this.state.form}<br/>Song deleted from DB</React.Fragment>});
+            this.setState({form:<React.Fragment>{this.state.form}<br/>{result.data}</React.Fragment>});
         });
     }
 
