@@ -17,3 +17,8 @@ body{
   background-size: cover;
 }
 
+@media screen and (max-width:50em){
+  body{
+    background-position:65%;
+  }
+}

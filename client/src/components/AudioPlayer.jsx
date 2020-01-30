@@ -85,7 +85,7 @@ export default class extends Component{
     getSong = async () => {
         await this.props.url;
         try{
-            audio.src = this.props.url;
+            audio.src = this.props.origURL + this.props.url;
         }catch(error){
             console.log(error)
         }
@@ -153,7 +153,7 @@ export default class extends Component{
                 musicpoint.style.width = len + "%";
                 secs < 10 ? curTime = mins + ":0"+ secs : curTime = mins + ":" + secs;
                 this.setState({songTime:curTime});
-            },1000);
+            },250);
         }
 
         audio.onended = () => {

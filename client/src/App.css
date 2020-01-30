@@ -216,8 +216,26 @@ h2,h3,h5{
   margin: 0 0;
   padding:0 0;
 }
-#mobileSearch li h3 + h3{
-  float:right;
+#artistMobile{
+  display:flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  flex-wrap:wrap !important;
+}
+#artistMobile > *{
+  flex:1;
+}
+#artistMobile h5{
+  flex-grow:1.5;
+}
+#artistMobile h5 span{
+  display:inline-block;
+  white-space: pre-wrap;
+}
+#artistMobile h3{
+  flex-grow:1.5;
+  text-align: right;
+  align-self: flex-end;
 }
 
 .currentlyPlayingSongMobile{

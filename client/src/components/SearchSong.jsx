@@ -1,6 +1,6 @@
 import React from 'react';
 import Axios from 'axios';
-import {Link} from 'react-router-dom';
+import {Link, Redirect, withRouter} from 'react-router-dom';
 import play from "../assets/play.svg";
 
 class SearchSong extends React.Component{
@@ -11,7 +11,8 @@ class SearchSong extends React.Component{
       searching:'',
       songs:'',
       searchType:'anime',
-      songData:''
+      songData:'',
+      origURL:''
     }
   }
 
@@ -62,7 +63,7 @@ all = (searchType) =>{
     {result.data.map((key,index) =>{
       return(
       <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
-      <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+      <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
     );
     })}  
     </ul>
@@ -74,7 +75,26 @@ all = (searchType) =>{
 
   componentDidMount = (e) =>{
      this.props.sendPlaylist("Search");
-     this.all();
+     if (this.props.location.pathname.length > 8){
+     let url = this.props.location.pathname;
+     url = url.slice(8,url.length);
+     let slash = url.indexOf('/');
+     let y = "";
+     let z = "";
+     if(slash !== -1){
+      y = url.slice(0,slash);
+      if(url.length > slash+1){
+       z = url.slice(slash+1);
+      }
+     }
+     else{
+       y = url;
+     }
+     this.setState({searchType:y,search:z},()=>{
+       this.onSubmit();
+      });
+    }
+    else this.all();
      this.props.checkForCurrentlyPlaying(this.state.songData);
     //  if(this.props.isUpdatingPlaylist){
     //    this.props.loopThroughExistingSongs();
@@ -156,7 +176,7 @@ onChange = (e) => {
         {result.data.map((key,index) =>{
           return(
           <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
-          <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+          <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
         );
         })}  
         </ul>
@@ -175,14 +195,22 @@ onChange = (e) => {
     this.setState({searching:''});
   }
 }
+
 onSubmit = (e) =>{
-  this.setState({ [e.target.name]: e.target.value });
-  e.preventDefault();
+  if(e){
+    console.log("EEE",e)
+    this.setState({ [e.target.name]: e.target.value });
+    e.preventDefault();
+  }
   this.setState({songs:"Loading..."})
   // get our form data out of state
-  const search  = this.state.search;
+  let search;
+  if(this.state.search.length > 0){
+    search = this.state.search;
+  }else{search = "";}
   const searchType = this.state.searchType;
     console.log(search);
+    this.props.history.push('/search/'+searchType+'/'+search);
     Axios.get('/search/'+searchType+'/'+search,{}).then((result)=>{
       if(!this.props.mobile){
       if(searchType === 'playlist'){
@@ -217,6 +245,8 @@ onSubmit = (e) =>{
     </tbody>
     </table>
       this.setState({songs:songs});
+      // this.props.updateURL(this.state.searchType,this.state.search);
+      
     }
   }
   else{
@@ -265,7 +295,7 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
             <option value="title">Song Title</option>
             <option value="playlist">Playlist</option>
             </select>
-            <button type="submit">Go</button>
+        <button type="submit">Go</button>
           </form>
           {this.state.songs}
         </div>
@@ -273,4 +303,4 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
     }
 }
 
-export default SearchSong;
+export default withRouter(SearchSong);

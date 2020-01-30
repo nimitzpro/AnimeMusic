@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import Axios from 'axios';
 import play from "../assets/play.svg";
+import {withRouter} from 'react-router-dom';
 
 class Playlist extends Component{
     constructor(props){
@@ -24,7 +25,16 @@ class Playlist extends Component{
     }
       
     componentDidMount(){
-        let _id = this.props._id;
+        let _id = "";
+        _id = this.props._id;
+        if(this.props.location.pathname.length > 10){
+            let url = this.props.location.pathname;
+            url = url.slice(10,url.length);
+            let y = "";
+            y = url.slice(0,url.length);
+            _id = y;
+        }
+        this.props.history.push(`/playlist/${_id}`);
         this.props.sendPlaylist(_id);
         console.log("ID :", _id)
         Axios.get('/playlist/'+_id,{}).then((result) =>{
@@ -56,7 +66,7 @@ class Playlist extends Component{
                 let index = i;
                 let key = result.data.songs[i];
                 songList.push(<li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)}>
-                    <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>);
+                    <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>);
             }
             // console.log(songList);
             let songs = <React.Fragment><div onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /><h2>{result.data.name}</h2></div><h3>Created by : {result.data.createdBy.username}</h3>
@@ -87,4 +97,4 @@ class Playlist extends Component{
             );
     }
 }
-export default Playlist;
+export default withRouter(Playlist);
