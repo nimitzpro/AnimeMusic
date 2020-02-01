@@ -14,8 +14,8 @@ export default class extends Component{
         }
     }
 
-    sendPlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails) =>{
-        this.props.sendPlaylistDetails(pName,pPrivate,pSongs,pID,songsDetails);
+    sendPlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails,createdBy) =>{
+        this.props.sendPlaylistDetails(pName,pPrivate,pSongs,pID,songsDetails,createdBy);
     }
 
     sendPlaylistAdmin = (_id) =>{

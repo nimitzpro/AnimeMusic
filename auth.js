@@ -71,4 +71,11 @@ auth.patch('/addplaylist', async (req,res)=>{
     console.log("Added playlist :",req.body.playlist);
 });
 
+// Remove playlist from account
+auth.patch('/removeplaylistfromaccount', async (req,res)=>{
+    await Account.findOneAndUpdate({_id:req.body._id},{$pull:{'playlists':req.body.playlistID}});
+    res.sendStatus(200);
+    console.log("Removed playlist", req.body.playlistID, "from", req.body._id);
+});
+
 module.exports = auth;

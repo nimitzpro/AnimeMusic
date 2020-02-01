@@ -27,14 +27,16 @@ class Playlist extends Component{
     componentDidMount(){
         let _id = "";
         _id = this.props._id;
-        if(this.props.location.pathname.length > 10){
-            let url = this.props.location.pathname;
-            url = url.slice(10,url.length);
-            let y = "";
-            y = url.slice(0,url.length);
-            _id = y;
+        if(!this.props.current){
+            if(this.props.location.pathname.length > 10){
+                let url = this.props.location.pathname;
+                url = url.slice(10,url.length);
+                let y = "";
+                y = url.slice(0,url.length);
+                _id = y;
+            }
+            this.props.history.push(`/playlist/${_id}`);
         }
-        this.props.history.push(`/playlist/${_id}`);
         this.props.sendPlaylist(_id);
         console.log("ID :", _id)
         Axios.get('/playlist/'+_id,{}).then((result) =>{
@@ -65,8 +67,8 @@ class Playlist extends Component{
             for(var i=0;i<result.data.songs.length;i++){
                 let index = i;
                 let key = result.data.songs[i];
-                songList.push(<li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)}>
-                    <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>);
+                songList.push(<li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
+                <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>);
             }
             // console.log(songList);
             let songs = <React.Fragment><div onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /><h2>{result.data.name}</h2></div><h3>Created by : {result.data.createdBy.username}</h3>

@@ -35,7 +35,7 @@ app.get('/home',(req,res)=>{
 // Returns all songs
 app.get('/all',async (req,res)=>{
     try{
-        const songs = await Song.find();
+        const songs = await Song.find().sort({title:1});
         res.send(songs);
         console.log("All");
     }
@@ -44,6 +44,12 @@ app.get('/all',async (req,res)=>{
         console.log(err);
     }
 });
+
+// Search specific song
+app.get('/searchforpreview/:_id', async (req,res)=>{
+    let song = await Song.findById({_id:req.params._id});
+    res.send(song);
+})
 
 // Returns searched songs
 app.get('/search/:searchType/:query', async (req,res)=>{
@@ -131,7 +137,10 @@ app.post('/submit',async (req,res)=>{
         anime: req.body.anime,
         type: req.body.type,
         typeNumber: req.body.typeNumber,
-        season: req.body.season
+        season: req.body.season,
+        imageURL:req.body.imageURL,
+        xPos:req.body.xPos,
+        yPos:req.body.yPos
     });
     try{
         const songSaved = await song.save();
@@ -179,7 +188,7 @@ app.get('/findplaylists', async (req,res)=>{
 
 // Find specific playlist to update
 app.get('/playlisttoupdate/:_id', async (req,res) =>{
-    const playlist = await Playlist.findOne({"_id":req.params._id}).populate('createdBy', 'username');
+    const playlist = await Playlist.findOne({"_id":req.params._id});
     res.send(playlist);
     console.log(playlist);
 });
@@ -217,8 +226,10 @@ app.post('/createplaylist', async (req,res)=>{
 });
 
 // Update song 
-// app.patch('/updatesongs',async (req,res)=>{
-//     await Song.updateMany({}, {$set:{typeNumber:1}}, options = {upsert:true});
-// });
+app.patch('/updatesong',async (req,res)=>{
+    const updateSong = await Song.findByIdAndUpdate({_id:req.body._id},{$set:req.body}, options = {upsert:true});
+    res.sendStatus(200);
+    console.log(updateSong);
+});
 
 app.listen(PORT, () => console.log("App listening on port "+PORT));

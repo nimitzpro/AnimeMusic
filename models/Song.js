@@ -12,7 +12,10 @@ const SongSchema = new Schema(
         type: String,
         enum: ['Opening','Ending','Insert']
     },
-    typeNumber:Number
+    typeNumber:Number,
+    imageURL:String,
+    xPos:Number,
+    yPos:Number
 },{
     versionKey: false
 }

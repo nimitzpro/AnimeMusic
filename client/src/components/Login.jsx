@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import UploadSong from './UploadSong.jsx';
+import UpdateSong from './UpdateSong.jsx';
 import DeleteSong from './DeleteSong.jsx';
 import Axios from 'axios';
 import {Link} from 'react-router-dom';
@@ -72,7 +73,7 @@ fetchPlaylistToEdit = (playlistID) =>{
         Axios.get('/playlisttoupdate/'+playlistID,{}).then((result) =>{
         console.log(result);  
         // e.preventDefault();
-        this.props.sendPlaylistDetails(result.data.name,result.data.private,result.data.songs,result.data._id,songDetails);
+        this.props.sendPlaylistDetails(result.data.name,result.data.private,result.data.songs,result.data._id,songDetails,result.data.createdBy);
         // let sendPlaylist = result.data.songs;
         // this.setState({playlistSongData:sendtoSongData});
         });   
@@ -94,6 +95,15 @@ deletePlaylist = (playlistID) =>{
                     }
                 });
             }
+            else{
+                const _id = this.props.accountData._id;
+                Axios.patch('/signin/removeplaylistfromaccount',{playlistID,_id}).then((response)=>{
+                    if(response.status === 200){
+                        console.log(playlistID, "deleted from account.");
+                        setTimeout(()=>{window.location.reload(true)},3000);
+                    }
+                });
+            }
         }
         else{
             if(result.data.createdBy._id === this.state.accountCache._id){
@@ -101,6 +111,15 @@ deletePlaylist = (playlistID) =>{
                 Axios.delete('/playlist/'+playlistID,{}).then((response) =>{
                     if(response.status === 200){
                         console.log(playlistID, "deleted.");
+                        setTimeout(()=>{window.location.reload(true)},3000);
+                    }
+                });
+            }
+            else{
+                const _id = this.state.accountCache._id;
+                Axios.patch('/signin/removeplaylistfromaccount',{playlistID,_id}).then((response)=>{
+                    if(response.status === 200){
+                        console.log(playlistID, "deleted from account.");
                         setTimeout(()=>{window.location.reload(true)},3000);
                     }
                 });
@@ -120,7 +139,7 @@ componentDidMount(){
             key.playlists.map((element) => {
                 return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
     })}</table></span></React.Fragment>
-    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><DeleteSong /></span> : ""}</React.Fragment>});
+    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><UpdateSong /><DeleteSong /></span> : ""}</React.Fragment>});
 }
 //         let email = this.props.email;{this.state.createPlaylist}
 //         let pass = this.props.pass;
@@ -183,7 +202,7 @@ onSubmit = (e) =>{
     {key.playlists.map((element) => {
         return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
     })}</table></span></React.Fragment>})}</React.Fragment>;
-this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{result.data[0].admin ? <span><UploadSong/><DeleteSong /></span> : ""}</React.Fragment>,},()=>{
+this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{result.data[0].admin ? <span><UploadSong/><UpdateSong /><DeleteSong /></span> : ""}</React.Fragment>,},()=>{
             // console.log(result.data[0]);
             this.setState({accountCache:result.data[0]});
             this.props.sendUid(result.data[0]);

@@ -83,9 +83,15 @@ export default class extends Component{
     }
 
     getSong = async () => {
+        await this.props.origURL;
         await this.props.url;
         try{
-            audio.src = this.props.origURL + this.props.url;
+            console.log(this.props.origURL)
+            console.log(this.props.url)
+            let test = this.props.origURL + '/';
+            test += this.props.url;
+            console.log(test)
+            audio.src = test;
         }catch(error){
             console.log(error)
         }

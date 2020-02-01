@@ -46,12 +46,19 @@ class App extends React.Component{
 //   this.handleSourceChange = childFunc;
 // }
 
-receivePlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails) =>{
-  if(pSongs){
-    this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,pSongs:pSongs,isUpdatingPlaylist:true,pID:pID},()=>this.loopThroughExistingSongs(songsDetails));
-  }
-  else{
-    this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,isUpdatingPlaylist:false},()=>this.refreshAside());
+receivePlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails,createdBy) =>{
+  if(this.state.accountData){
+    if(this.state.accountData._id === createdBy){
+      if(pSongs){
+        this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,pSongs:pSongs,isUpdatingPlaylist:true,pID:pID},()=>this.loopThroughExistingSongs(songsDetails));
+      }
+      else{
+        this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,isUpdatingPlaylist:false},()=>this.refreshAside());
+      }
+    }
+    else{
+      console.log("You do not have permission to edit this playlist");
+    }
   }
   // console.log("Details received", pName, pPrivate)
 }
@@ -346,7 +353,7 @@ responsiveSearch = (x)=>{
   if (x.matches) { // If media query matches
     this.setState({mobile:true});
   } else {
-    this.setState({mobile:false});
+    this.setState({mobile:true});
   }
 }
 
@@ -360,11 +367,49 @@ componentDidMount = () =>{
 updateURL = () =>{
   console.log("got to here");
   let origURL = window.location.href;
+  origURL = origURL.slice(0,5)+"/"+origURL.slice(5,origURL.length);
   console.log("yeet")
   console.log(window.location.pathname)
   origURL = origURL.replace(window.location.pathname,"")
   console.log(origURL);
-  this.setState({origURL:origURL+"/"});
+  this.setState({origURL:origURL});
+}
+
+addPlaylistToAC = (playlistID) =>{
+  if(this.state.accountData){
+    const _id = this.state.accountData._id;
+    const playlist = playlistID;
+    Axios.patch('/signin/addplaylist',{_id,playlist}).then((result)=>{
+      if(result.status === 200){
+        console.log("Added playlist to A/C")
+      }
+    });
+  }
+}
+
+clonePlaylistToAC = (playlistID) =>{
+  if(this.state.accountData){
+    Axios.get('/playlisttoupdate/'+playlistID,{}).then((result)=>{
+      const name = result.data.name;
+      const songs = result.data.songs;
+      const privacy = true;
+      const uid = this.state.accountData._id;
+      Axios.post('/createplaylist',{name,songs,privacy,uid}).then((result)=>{
+        const _id = uid;
+        const playlist = result.data._id;
+        Axios.patch('/signin/addplaylist',{_id,playlist}).then((response2)=>{
+          if(response2.status === 200){
+            this.setState({pList:<aside><h3>Playlist {this.state.pName} cloned!</h3></aside>},()=>{
+            setTimeout(()=>{
+              // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
+              window.location.reload(true);
+            },3000);
+          });
+          }
+        });
+      });
+    });
+  }
 }
 
 render(){
@@ -390,14 +435,16 @@ render(){
           {/* {this.state.searching} */}
 
           
-            <Route exact path="/" render={() => <React.Fragment><SearchSong mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
-            <Route path="/search" render={() => <React.Fragment><SearchSong mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
+            <Route exact path="/" render={() => <React.Fragment><SearchSong clonePlaylistToAC={this.clonePlaylistToAC} addPlaylistToAC={this.addPlaylistToAC} isSignedIn={this.state.isSignedIn} mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
+            <Route path="/search" render={() => <React.Fragment><SearchSong clonePlaylistToAC={this.clonePlaylistToAC} addPlaylistToAC={this.addPlaylistToAC} isSignedIn={this.state.isSignedIn} mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
             <Route exact path="/signin" render={() => <Admin value={admin} sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/>} />
-            <Route path="/playlist" render={() => <Playlist mobile={this.state.mobile} _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} sendPlaylist={this.receivePlaylist} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
-            <Route path="/currentplaylist" render={() => <Playlist mobile={this.state.mobile} _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} />
+            <Route path="/playlist" render={() => <Playlist current={false} mobile={this.state.mobile} _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} sendPlaylist={this.receivePlaylist} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
+            <Route path="/currentplaylist" render={() => <Playlist current={true} mobile={this.state.mobile} _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} />
           <AudioPlayer origURL={this.state.origURL} url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} typeNumber={this.state.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.state.isSignedIn} username={(this.state.accountData) ? this.state.accountData.username : ''}/>
+          
+          {/* <Admin value={admin} sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/> */}
           <footer>
-            <h3>2020 Alexander Stradnic &copy;</h3>
+            <h3><a href="http://nimitzpro.github.io">2020 Alexander Stradnic</a></h3>
           </footer>
           {this.state.pList}
           </BrowserRouter>

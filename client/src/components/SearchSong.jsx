@@ -1,7 +1,8 @@
 import React from 'react';
 import Axios from 'axios';
-import {Link, Redirect, withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import play from "../assets/play.svg";
+import settings from '../assets/settings.png';
 
 class SearchSong extends React.Component{
     constructor(props){
@@ -12,9 +13,47 @@ class SearchSong extends React.Component{
       songs:'',
       searchType:'anime',
       songData:'',
-      origURL:''
+      origURL:'',
+      dialogBoxID:''
     }
   }
+
+clonePlaylistToAC = (playlistID) =>{
+  console.log("Cloning playlist to a/c");
+  this.props.clonePlaylistToAC(playlistID);
+}
+
+addPlaylistToAC = (playlistID) =>{
+  console.log("Adding playlist to a/c");
+  this.props.addPlaylistToAC(playlistID);
+}
+
+// Rendering of dialog box
+dialogBox = (dialogID,enable) =>{
+  if(this.state.dialogBoxID){
+      document.getElementById(`${this.state.dialogBoxID}`).style.display = "none";
+      this.setState({dialogBoxID:''},()=>{
+      this.dialogBox2(dialogID,enable);
+      });
+  }
+  else{
+      this.dialogBox2(dialogID,enable);
+  }   
+}
+
+dialogBox2 = (dialogID,enable) =>{
+  if(dialogID){
+      if(enable){
+          document.getElementById(`${dialogID}`).style.display = "block";
+          this.setState({dialogBoxID:dialogID});
+      }
+      else{
+          document.getElementById(`${dialogID}`).style.display = "none";
+          this.setState({dialogBoxID:''});
+      }
+  }
+}
+
 
 handleOnClick = (i) =>{
   let songData = this.state.songData;
@@ -32,6 +71,7 @@ all = (searchType) =>{
             <td><Link to="/playlist" className="link" onClick={() =>this.handlePlaylistClick(key._id)}>{key.name}</Link></td>
             <td>{key.songs.length}</td>
             <td>{key.createdBy.username}</td>
+            <td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+key._id,true)} /><ul id={"dialog"+key._id} className="dialogbox"><li onClick={() => this.clonePlaylistToAC(key._id)}>Add Playlist</li><li onClick={() => this.addPlaylistToAC(key._id)}>Bookmark Playlist</li></ul></td>
           </tr>
         })}
       </tbody>
@@ -62,7 +102,7 @@ all = (searchType) =>{
     let songs = <ul id="mobileSearch">
     {result.data.map((key,index) =>{
       return(
-      <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+      <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
       <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
     );
     })}  
@@ -73,7 +113,20 @@ all = (searchType) =>{
   }
 }
 
+checkLoginStatus = () =>{
+  if(this.props.isSignedIn === false){
+    console.log("got to hereeeeee")
+    var settings = document.getElementsByClassName('settings');
+    var i;
+    for(i = 0;i < settings.length;i++){
+      console.log("Set",i,"to none")
+      settings[i].style.display = "none";
+    }
+  }
+}
+
   componentDidMount = (e) =>{
+      // this.checkLoginStatus();
      this.props.sendPlaylist("Search");
      if (this.props.location.pathname.length > 8){
      let url = this.props.location.pathname;
@@ -131,6 +184,7 @@ onChange = (e) => {
                 <td><Link to="/playlist" className="link" onClick={() =>this.handlePlaylistClick(key._id)}>{key.name}</Link></td>
                 <td>{key.songs.length}</td>
                 <td>{key.createdBy.username}</td>
+                <td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+key._id,true)} /><ul id={"dialog"+key._id} className="dialogbox"><li onClick={() => this.clonePlaylistToAC(key._id)}>Add Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.addPlaylistToAC(key._id)}>Bookmark Playlist</li></ul></td>
               </tr>
             })}
           </tbody>
@@ -164,6 +218,7 @@ onChange = (e) => {
                 <td><Link to="/playlist" className="link" onClick={() =>this.handlePlaylistClick(key._id)}>{key.name}</Link></td>
                 <td>{key.songs.length}</td>
                 <td>{key.createdBy.username}</td>
+                <td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+key._id,true)} /><ul id={"dialog"+key._id} className="dialogbox"><li onClick={() => this.clonePlaylistToAC(key._id)}>Add Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.addPlaylistToAC(key._id)}>Bookmark Playlist</li></ul></td>
               </tr>
             })}
           </tbody>
@@ -175,7 +230,7 @@ onChange = (e) => {
         let songs = <ul id="mobileSearch">
         {result.data.map((key,index) =>{
           return(
-          <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
+          <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
           <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
         );
         })}  
@@ -270,8 +325,8 @@ onSubmit = (e) =>{
       let songs = <ul id="mobileSearch">
       {result.data.map((key,index) =>{
         return(
-        <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)}>
-        <h3>{key.title}</h3><h3>{key.artist}</h3><h5>{key.anime} {key.season} - {key.type} {key.typeNumber}</h5></li>
+        <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
+        <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
       );
       })}  
       </ul>
@@ -286,7 +341,7 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
 }  
     render(){
         return(
-            <div className="search-container">
+            <div className="search-container" onClick={()=>this.dialogBox("",false)}>
               <p><i>What is Anime Music Player?</i> It is a site that allows you to play anime songs! You can also create an account and make your own playlists!</p>
           <form onSubmit={this.onSubmit} method="get">
             <input type="text" placeholder="Search Anime Music.." name="search" onChange={this.handleChange} />

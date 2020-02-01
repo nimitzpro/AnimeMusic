@@ -54,9 +54,18 @@ nav{
   margin:0 auto;
 } */
 footer{
-  margin-top: 3em;
+  /* margin-top: 3em; */
   padding: 0.5em;
   background-color: rgb(255, 255, 255);
+}
+footer a{
+  color:black;
+  text-decoration:none;
+  transition:all 0.5s ease;
+}
+footer a:hover{
+  text-decoration:underline;
+  color:crimson;
 }
 tr td > img{
   height: 1em;
@@ -141,6 +150,7 @@ aside:hover{
 }
 .settings{
   position:relative;
+  display:block;
 }
 .settings img{
   margin-top:40%;
@@ -166,7 +176,17 @@ aside:hover{
 .settings .dialogbox li:hover{
   background-color: lightcoral;
 }
+#mobileSearch{
+  cursor: pointer;
+  /* width:60%; */
+}
+#mobileSearch li{
+  /* margin:1em 1em !important; */
+}
 @media screen and (max-width:50em){
+  #mobileSearch{
+    width:100%;
+  }
   .App{
     font-size:1em;
     margin-bottom:4.8em;
@@ -204,10 +224,16 @@ h2,h3,h5{
   list-style: none;
   text-align: left;
   padding:0 0;
+  margin:0 0;
+  color:white;
 }
 #mobileSearch li{
-  margin:0em 1em;
-  padding:1em 0;
+  /* margin:0em 1em; */
+  padding:1.75em 0.5em 0.75em 0.5em;
+  background-position: 50% 50%;
+  background-attachment: scroll;
+  background-clip: padding-box;
+  background-size:cover;
 }
 #mobileSearch li:not(:nth-last-child(1)){
   border-bottom:0.1em solid black;
@@ -223,6 +249,7 @@ h2,h3,h5{
   flex-wrap:wrap !important;
 }
 #artistMobile > *{
+  padding:0 1em;
   flex:1;
 }
 #artistMobile h5{
@@ -239,6 +266,8 @@ h2,h3,h5{
 }
 
 .currentlyPlayingSongMobile{
-  color:crimson;
+  /* color:crimson; */
+  text-shadow: white 1px 0 10px;
+  text-shadow: black 1px 0 10px,black 1px 0 10px,black 1px 0 10px,black 1px 0 10px;
   font-weight:bolder;
 }

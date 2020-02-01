@@ -13,3 +13,7 @@ Annoying things
 New things
 7. Add friends (change playlist viewing perms to Private, Friend level, Public level)
 8. Ability to add playlist from public/friend to personal a/c, or to copy to personal a/c for editing
+9. Remove playlist from account DONE
+10. (Add)/clone playlist to account DONE
+11. Images
+11+. Image variables for positioning (x,y)
