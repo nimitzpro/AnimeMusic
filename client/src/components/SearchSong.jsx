@@ -165,7 +165,7 @@ handlePlaylistClick = (_id) =>{
   this.props.sendPlaylist(_id);
 }
 
-onChange = (e) => {
+onChange = () => {
   const search = this.state.search;
   const searchType = this.state.searchType;
   console.log(search)
@@ -173,7 +173,7 @@ onChange = (e) => {
     this.setState({songs:"Loading..."})
   // get our form data out of state
     // console.log(searchType);
-    this.props.history.push('/search/'+searchType+'/'+search);
+    // this.props.history.push('/search/'+searchType+'/'+search);
     Axios.get('/search/'+searchType+'/'+search, {}).then((result)=>{
       if(!this.props.mobile){
       if(searchType === 'playlist'){
@@ -345,7 +345,7 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
             <div className="search-container" onClick={()=>this.dialogBox("",false)}>
               <p><i>What is Anime Music Player?</i> It is a site that allows you to play anime songs! You can also create an account and make your own playlists!</p>
           <form onSubmit={this.onSubmit} method="get">
-            <input type="text" placeholder="Search Anime Music.." name="search" onChange={this.handleChange} />
+            <input type="text" placeholder="Search Anime Music - Enter or 'Go' to save to URL)" size="35"name="search" onChange={this.handleChange} />
             <select placeholder="Search By" name="searchType" onChange={this.handleChange}>
             <option value="anime" selected>Anime Name</option>
             <option value="title">Song Title</option>

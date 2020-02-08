@@ -37,7 +37,12 @@ class AudioPlayer extends Component{
     }
 
     setLink = () =>{
+        try{
         document.getElementById('songinfo').setAttribute('class',`${this.state.linkIsActive[0]}`);
+        }
+        catch(err){
+            console.log(err);
+        }
         let x = this.props.location.pathname;
         this.setState({cachedLink:x});
     }
@@ -244,14 +249,14 @@ class AudioPlayer extends Component{
         return(
             <React.Fragment>
             {this.audio}
-        {this.state.isFull === true ? <FullAudioPlayer repeatState={this.repeatState} replayIcon={this.state.replayIcon} shuffle={shuffle} shuffleState={(x)=>this.shuffleState(x)}playing={this.state.playing} pauseSong={this.pauseSong} playSong={this.playSong} button={this.state.button} skipForward={this.skipForward} skipBackward={this.skipBackward} songTime={this.state.songTime} songLength={this.state.songLength}skip={(x) => this.skip(x)}hideFull={(a) => this.hideFull(a)} origURL={this.props.origURL} url={this.props.url} title={this.props.title} artist={this.props.artist} anime={this.props.anime} type={this.props.type} typeNumber={this.props.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.props.isSignedIn} username={(this.props.accountData) ? this.props.accountData.username : ''} imageURL={this.props.imageURL} xPos={this.props.xPos} yPos={this.props.yPos}/> :
+        {this.state.isFull === true ? <FullAudioPlayer repeatState={this.repeatState} replayIcon={this.state.replayIcon} shuffle={shuffle} shuffleState={(x)=>this.shuffleState(x)}playing={this.state.playing} pauseSong={this.pauseSong} playSong={this.playSong} button={this.state.button} skipForward={this.skipForward} skipBackward={this.skipBackward} songTime={this.state.songTime} songLength={this.state.songLength}skip={(x) => this.skip(x)}hideFull={(a) => this.hideFull(a)} origURL={this.props.origURL} url={this.props.url} title={this.props.title} artist={this.props.artist} anime={this.props.anime} season={this.props.season} type={this.props.type} typeNumber={this.props.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.props.isSignedIn} username={(this.props.accountData) ? this.props.accountData.username : ''} imageURL={this.props.imageURL} xPos={this.props.xPos} yPos={this.props.yPos}/> :
     
     <div id="audioplayer">
     <div id="songinfo" className={this.state.linkIsActive[0]}>
     {/* <Link to="/currentplaylist"> */}
     <button onClick={() => this.setState({isFull:true})} style={{"width":"100%","height":"100%",display:"flex", alignItems:"center"}}>
         <div style={{display:"inline-block",height:"4em",width:"4em",margin:"0 0.2em 0 -2em",backgroundImage:`url(${this.props.imageURL})`,border:"1px double black",backgroundSize:"cover",backgroundPosition:`${this.props.xPos}% 0%`,borderRadius:"5%"}}></div>
-    <span><b>{this.props.title}</b> - {this.props.artist} <br/>  <b>{this.props.anime} {this.props.season}</b> - {this.props.type} {this.props.typeNumber}</span>
+    <span><b>{this.props.title}</b> - <span style={{display:"inline-block"}}>{this.props.artist}</span> <br/>  <b>{this.props.anime} {this.props.season}</b> - <span style={{display:"inline-block"}}>{this.props.type} {this.props.typeNumber}</span></span>
     </button>
     {/* </Link> */}
     </div>

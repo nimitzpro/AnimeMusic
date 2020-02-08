@@ -253,6 +253,19 @@ handlePrevSong = () =>{
     console.log("Popped",k,"from cache to be replayed");
   }
   else{
+    if(this.state.songData.length > 0){
+      let songList = this.state.songData;
+      let i;
+      this.state.songIndex ? i = this.state.songIndex : i = 0;
+      if(i != 0){
+        this.playSong(i-1,songList[i-1]._id);
+        this.setState({playedSongsCache:[]});
+      }
+      else{
+        this.playSong(songList.length-1,songList[songList.length-1]._id);
+        this.setState({playedSongsCache:[]});
+      }
+    }
     console.log("no songs in cache");
   }
 }
