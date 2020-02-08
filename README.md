@@ -11,14 +11,15 @@
 - Responsiveness
 
 #### New things
-7. Add friends (change playlist viewing perms to Private, Friend level, Public level)
-8. Ability to add playlist from public/friend to personal a/c, or to copy to personal a/c for editing
+7. ~~Add friends (change playlist viewing perms to Private, Friend level, Public level)~~
+8. ~~Ability to add playlist from public/friend to personal a/c, or to copy to personal a/c for editing~~
 9. Remove playlist from account DONE
 10. (Add)/clone playlist to account DONE
 11. Images DONE
 - Image variables for positioning (x,y) DONE
 
 #### Even newer things
-- Add full screen player page
+- Add full screen player page STARTED
 - Hidden side menu bar
 - playlist creation broken FIXED
+- Unsubmitted search doesn't save page url
