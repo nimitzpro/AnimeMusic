@@ -44,7 +44,7 @@
     box-shadow: inset 0.25em 0.25em 1em white, -0.25em -0.25em 1em white, 0.25em -0.25em 1em white, -0.25em 0.25em 1em white; 
 }
 #audioplayer .secIcon{
-    height:60%;
+    height:60% !important;
     width:auto;
     /* background-color:lightgray; */
     transition:all 0.5s ease;
@@ -154,7 +154,8 @@
     justify-content: flex-end;
 }
 
-#audioplayer #songinfo a{
+#audioplayer #songinfo button{
+    text-align:left;
     font-size: 0.85em;
     text-decoration: none;
     color:inherit;
@@ -216,4 +217,119 @@
     border: 0;
     box-shadow: none;
 }
+}
+
+@media screen and (max-width:50em){
+    #songinfo button div{
+        display:none !important;
+    }
+    #songinfo *{
+        margin: 0 0 !important;
+        font-size:1.05em;
+    }
+    #fullplayer{
+        font-size:10px;
+    }
+    #fullplayer button{
+        height:3em !important;
+    }
+    #fullplayer>*:nth-child(1){
+        margin-top:6em !important;
+    }
+    #cont #musicline{
+        height:0.1em;
+    }
+}
+@media screen and (min-width:75em){
+    #other button{
+        height:2em !important;
+    }
+}
+
+#fullplayer{
+    display:block;
+    width:100%;
+    height:100%;
+    position:fixed;
+    background-color:white;
+    top:0;
+}
+#fullplayer>*:nth-child(1){
+    margin-top:3em;
+}
+
+#fullplayer h1,#fullplayer h2{
+    display:inline-block;
+    margin:0;
+}
+#fullplayer marquee{
+    width:25em;
+    font-size:1.5em;
+    margin: 0.25em 0;
+}
+#fullplayer button img{
+    height:100%;
+    width:auto;
+    border:0;
+}
+#fullplayer .secIcon{
+    height:60%;
+}
+#fullplayer #buttons{
+    width: fit-content;
+    margin:0 auto;
+    display:flex !important;
+    justify-content: center;
+    align-items: center;
+    flex-wrap:wrap;
+}
+#fullplayer button{
+    height:4em;
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+    outline: none;
+    margin:0 1em;
+}
+#fullplayer .icon{
+    padding:0.5em;
+    height:100%;
+    /* background-color:white; */
+    /* border:0.1em solid black; */
+    border-radius:50%;
+    outline: none;
+    margin:0 0 0 0;
+    display:inline-block;
+    position:relative;
+    border: 0.1em solid transparent;
+    /* margin: -20px -20px; */
+    transition:all 0.2s ease-in-out;
+    /* outline-offset: -2em; */
+    /* box-sizing: border-box; */
+}
+#fullplayer .icon:hover{
+    background-color:rgba(255,255,255,0.2);
+    border: 0.1em solid crimson;
+    box-shadow: inset 0.25em 0.25em 1em white, -0.25em -0.25em 1em white, 0.25em -0.25em 1em white, -0.25em 0.25em 1em white; 
+}
+#fullplayer #cont{
+    margin-bottom:1em;
+}
+#other{
+    position:fixed;
+    display:inline-block;
+    right:0;
+    bottom:0;
+    width:100%;
+}
+#other button{
+    font-size:1em;
+}
+#other2{
+    position:fixed;
+    display:inline-block;
+    right:0;
+    top:0;
 }

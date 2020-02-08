@@ -27,6 +27,7 @@ header{
   background-color:rgba(255, 255, 255, 0.781);
   margin: 0 0;
   position:fixed;
+  z-index:10;
 }
 header h1{
   margin:0 0;
@@ -189,6 +190,7 @@ aside:hover{
   }
   .App{
     font-size:1em;
+    margin-top:5.4em;
     margin-bottom:4.8em;
   }
 h2,h3,h5{

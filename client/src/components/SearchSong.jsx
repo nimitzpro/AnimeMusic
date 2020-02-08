@@ -173,6 +173,7 @@ onChange = (e) => {
     this.setState({songs:"Loading..."})
   // get our form data out of state
     // console.log(searchType);
+    this.props.history.push('/search/'+searchType+'/'+search);
     Axios.get('/search/'+searchType+'/'+search, {}).then((result)=>{
       if(!this.props.mobile){
       if(searchType === 'playlist'){

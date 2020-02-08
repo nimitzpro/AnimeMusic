@@ -8,16 +8,18 @@ import skip from "../assets/skip.svg";
 import replay from "../assets/replay.svg";
 import replay1 from "../assets/replay1.svg";
 import HOMEICON from '../assets/home.png';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
+import FullAudioPlayer from './FullAudioPlayer.jsx';
 
 let audio = new Audio();
 
-export default class extends Component{
+class AudioPlayer extends Component{
     constructor(props){
         super(props);
         this.props.setChildMethod(this.getSong);
         this.props.setAudioPlayerLink2(this.setLink);
         this.props.setAudioPlayerLink3(this.removeLink);
+        this.props.hideFullPlayer(this.hideFull)
         // this.props.handleSourceChange(this.pauseSong);
         this.state = {
             playing: false,
@@ -27,12 +29,17 @@ export default class extends Component{
             repeat: 1, //0: Stop after song finishes, 1: Continue to next song, 2: Repeat same song
             replayIcon:replay,
             shuffle: false, //, false: Ignore, true: Play random song in list
-            linkIsActive: ["activeLink","disabled-link"]
+            linkIsActive: ["activeLink","disabled-link"],
+            fullPlayer: true, // If fullplayer is showing or not
+            isFull:false,
+            cachedLink:''
         }
     }
 
     setLink = () =>{
-        document.getElementById('songinfo').setAttribute('class',`${this.state.linkIsActive[0]}`)
+        document.getElementById('songinfo').setAttribute('class',`${this.state.linkIsActive[0]}`);
+        let x = this.props.location.pathname;
+        this.setState({cachedLink:x});
     }
 
     removeLink = () =>{
@@ -117,6 +124,28 @@ export default class extends Component{
             }
         }
     }
+    
+    hideFull = (a) =>{
+        console.log(a);
+        this.setState({isFull:false});
+        switch(a){
+            case "playlist":
+                if(this.props.playlistURL === "Search"){
+                    const x = this.state.cachedLink;
+                    this.props.history.push(x);
+                    break;
+                }   
+                else{
+                    this.props.history.push('/playlist/'+this.props.playlistURL);
+                }
+                break;
+            case "signin":
+                this.props.history.push('/signin');
+                break;
+            default:
+                break;
+        }
+    }
 
     render(){
 
@@ -177,19 +206,55 @@ export default class extends Component{
                 console.log("Audio Stopped.")
             }
         }
+        // let def = <div id="audioplayer">
+        // <div id="songinfo" className={this.state.linkIsActive[0]}>
+        // {/* <Link to="/currentplaylist"> */}
+        // <button onClick={this.showFullPlayer}>
+        // <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type} {this.props.typeNumber}</span>
+        // </button>
+        // {/* </Link> */}
+        // </div>
+        // <div id="buttons">
+        // <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" id="shuffleIcon" src={shuffle} alt='' /></button>
+        // <button id="audiobutton" onClick={this.skipBackward}><img className="icon secIcon" src={skipBack} alt='' /></button>
+        // <button id="audiobutton" onClick={this.state.playing ? this.pauseSong : this.playSong}><img className="icon mainIcon" src={this.state.button} alt='' /></button>
+        // <button id="audiobutton" onClick={this.skipForward}><img className="icon secIcon" src={skip} alt='' /></button>
+        // <button id="audiobutton" onClick={this.repeatState}><img className="icon secIcon enabled" id="repeatIcon" src={this.state.replayIcon} alt='' /></button>
+        // <button id="audiobutton" id="homeIcon"><Link to="/signin"><img className="icon secIcon" src={HOMEICON} alt='' /></Link></button>
+        // <div id="cont" onClick={(pos) => this.skip(pos.nativeEvent.offsetX)}><p className="timestamp">{this.state.songTime}</p><div id="musicline"><div id="musicpoint"></div><div id="musichover"></div></div><p className="timestamp">{this.state.songLength}</p></div>
+        // </div>
+        //     <div id="links">
+        //     {this.props.isSignedIn ? <div>Signed in as <Link to="/signin" className="link">{this.props.username}</Link></div> : <Link to="/signin" className="link">{"Sign In/Register"}</Link>}
+        //     </div></div>;
+        // let res;
+        // if(this.props.location){
+        //     console.log(this.props.location);
+        //     console.log(this.props.location.pathname)
+        //     if(this.props.location.pathname == "/currentplaylist"){
+        //     res = <FullAudioPlayer origURL={this.props.origURL} url={this.props.url} title={this.props.title} artist={this.props.artist} anime={this.props.anime} type={this.props.type} typeNumber={this.props.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.props.isSignedIn} username={(this.props.accountData) ? this.props.accountData.username : ''} imageURL={this.props.imageURL} xPos={this.props.xPos} yPos={this.props.yPos}/>;
+        //     }
+        //     else{
+        //         res=def;
+        //     }
+        // }
+        // else{
+        //     res = def;
+        // }
 
         return(
-        <div id="audioplayer">
+            <React.Fragment>
             {this.audio}
-            
-    {/* <marquee behaviour="slide" scrolldelay="10"> */}
-    <div id="songinfo" className={this.state.linkIsActive[1]}>
-    <Link to="/currentplaylist">
-    <span>Now playing : {this.props.title} | {this.props.artist} <br/>  {this.props.anime} {this.props.season} | {this.props.type} {this.props.typeNumber}</span>
-    </Link>
-    </div>
-    {/* </marquee> */}
+        {this.state.isFull === true ? <FullAudioPlayer repeatState={this.repeatState} replayIcon={this.state.replayIcon} shuffle={shuffle} shuffleState={(x)=>this.shuffleState(x)}playing={this.state.playing} pauseSong={this.pauseSong} playSong={this.playSong} button={this.state.button} skipForward={this.skipForward} skipBackward={this.skipBackward} songTime={this.state.songTime} songLength={this.state.songLength}skip={(x) => this.skip(x)}hideFull={(a) => this.hideFull(a)} origURL={this.props.origURL} url={this.props.url} title={this.props.title} artist={this.props.artist} anime={this.props.anime} type={this.props.type} typeNumber={this.props.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.props.isSignedIn} username={(this.props.accountData) ? this.props.accountData.username : ''} imageURL={this.props.imageURL} xPos={this.props.xPos} yPos={this.props.yPos}/> :
     
+    <div id="audioplayer">
+    <div id="songinfo" className={this.state.linkIsActive[0]}>
+    {/* <Link to="/currentplaylist"> */}
+    <button onClick={() => this.setState({isFull:true})} style={{"width":"100%","height":"100%",display:"flex", alignItems:"center"}}>
+        <div style={{display:"inline-block",height:"4em",width:"4em",margin:"0 0.2em 0 -2em",backgroundImage:`url(${this.props.imageURL})`,border:"1px double black",backgroundSize:"cover",backgroundPosition:`${this.props.xPos}% 0%`,borderRadius:"5%"}}></div>
+    <span><b>{this.props.title}</b> - {this.props.artist} <br/>  <b>{this.props.anime} {this.props.season}</b> - {this.props.type} {this.props.typeNumber}</span>
+    </button>
+    {/* </Link> */}
+    </div>
     <div id="buttons">
     <button id="audiobutton" onClick={this.state.shuffle ? () => this.shuffleState(false) : () => this.shuffleState(true)}><img className="icon secIcon" id="shuffleIcon" src={shuffle} alt='' /></button>
     <button id="audiobutton" onClick={this.skipBackward}><img className="icon secIcon" src={skipBack} alt='' /></button>
@@ -201,9 +266,12 @@ export default class extends Component{
     </div>
         <div id="links">
         {this.props.isSignedIn ? <div>Signed in as <Link to="/signin" className="link">{this.props.username}</Link></div> : <Link to="/signin" className="link">{"Sign In/Register"}</Link>}
-        </div>
-        </div>
+        </div></div>}
+
+        {/* {this.state.res} */}
+        </React.Fragment>
 
         );
     }
 }
+export default withRouter(AudioPlayer);

@@ -20,3 +20,5 @@
 
 #### Even newer things
 - Add full screen player page
+- Hidden side menu bar
+- playlist creation broken FIXED

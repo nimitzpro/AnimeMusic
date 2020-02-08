@@ -8,6 +8,7 @@ import Login from './components/Login.jsx';
 import AudioPlayer from './components/AudioPlayer.jsx';
 import Playlist from './components/Playlist.jsx';
 import Axios from 'axios';
+import FullAudioPlayer from './components/FullAudioPlayer.jsx';
 
 class App extends React.Component{
   constructor(props){
@@ -15,7 +16,7 @@ class App extends React.Component{
     this.state = {
       origURL:'', // Starting URL of website
       url: '', // URL of song playing
-      title: 'nothing!', // Title of song playing
+      title: '', // Title of song playing
       artist: '', // Artist of song playing
       anime: '', // Anime of song playing
       type: '', // Type of song playing
@@ -52,9 +53,9 @@ receivePlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails,createdBy) =>{
       if(pSongs){
         this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,pSongs:pSongs,isUpdatingPlaylist:true,pID:pID},()=>this.loopThroughExistingSongs(songsDetails));
       }
-      else{
-        this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,isUpdatingPlaylist:false},()=>this.refreshAside());
-      }
+    }
+    else if(!createdBy && !pSongs){
+      this.setState({addingToPlaylist:true,pName:pName,pPrivate:pPrivate,isUpdatingPlaylist:false},()=>this.refreshAside());
     }
     else{
       console.log("You do not have permission to edit this playlist");
@@ -175,12 +176,12 @@ else{
 setAudioPlayerLink = (playlistPlayingID,songKey) =>{
   console.log("AudioLink :",playlistPlayingID,", calledFromPlayer", this.state.calledFromPlayer);
   // this.setState({_id:_id});
-  if(playlistPlayingID == '' || this.state.calledFromPlayer == false){
-    this.setAudioPlayerLink3();
-  }
-  else{
+  // if(playlistPlayingID == '' || this.state.calledFromPlayer == false){
+  //   this.setAudioPlayerLink3();
+  // }
+  // else{
     this.setAudioPlayerLink2();
-  }
+  // }
 
   this.setChildMethod(); // Pass data to AudioPlayer
 }
@@ -193,7 +194,7 @@ setAudioPlayerLink3 = (childMethod) =>{
   this.setAudioPlayerLink3 = childMethod;
 }
 
-audioInfo = (url,title,artist,anime,season,type,typeNumber,songIndex,calledFromPlayer,songKey) =>{
+audioInfo = (url,title,artist,anime,season,type,typeNumber,songIndex,calledFromPlayer,songKey,imageURL,xPos,yPos) =>{
     if(anime){
       let finishedSongData = songIndex;
       let playedSongsCache = this.state.playedSongsCache;
@@ -207,7 +208,7 @@ audioInfo = (url,title,artist,anime,season,type,typeNumber,songIndex,calledFromP
     console.log("Songkey in audioinfo",songKey);
     season ? this.setState({anime:anime+" "+season}) : this.setState({anime:anime});
     console.log("audioInfo:", url,title,artist,anime,season,type,songIndex,songKey);
-    this.setState({url:url, title:title, artist:artist, type:type,typeNumber:typeNumber},() => (this.setAudioPlayerLink(this.state.playlistPlayingID,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
+    this.setState({url:url, title:title, artist:artist, type:type,typeNumber:typeNumber,imageURL:imageURL,xPos:xPos,yPos:yPos},() => (this.setAudioPlayerLink(this.state.playlistPlayingID,songKey)));// Pass link if from playlist/no link if from search to AudioPlayer
     // this.setState({songKey:songKey},()=>
 }
 
@@ -323,7 +324,7 @@ playSong = async (i,songKey) =>{
   console.log("TRIGGERED",songData);
   if(songData != ''){
     console.log("in playsong 2 :",i,songKey)
-    this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,true,songKey);
+    this.audioInfo(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,true,songKey,songData[i].imageURL,songData[i].xPos,songData[i].yPos);
     this.setState({songIndex:i});
       // this.handleOnClickplaylistSongData(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,i)
       // this.setState({songIndex:i});
@@ -361,6 +362,7 @@ componentDidMount = () =>{
   var x = window.matchMedia("(max-width: 50em)");
   this.responsiveSearch(x);
   this.updateURL();
+  this.setAudioPlayerLink3();
 }
 
 
@@ -412,6 +414,10 @@ clonePlaylistToAC = (playlistID) =>{
   }
 }
 
+hideFullPlayer = (childMethod) =>{
+  this.hideFullPlayer = childMethod;
+}
+
 render(){
   // Call listener function at run time
   // x.addListener(this.responsiveSearch) // Attach listener function on state changes
@@ -419,9 +425,6 @@ render(){
   return (
     <div className="App">
       <BrowserRouter>
-      <header>
-      <h1><Link to="/">Anime Music Player</Link></h1>
-      </header>
       {/* <nav>
         <ul>
           <li><a href="/">Home</a></li>
@@ -434,13 +437,18 @@ render(){
       </audio> */}
           {/* {this.state.searching} */}
 
-          
+          <header>
+                    <h1><Link to="/" onClick={this.hideFullPlayer}>Anime Music Player</Link></h1>
+                  </header>
             <Route exact path="/" render={() => <React.Fragment><SearchSong clonePlaylistToAC={this.clonePlaylistToAC} addPlaylistToAC={this.addPlaylistToAC} isSignedIn={this.state.isSignedIn} mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
             <Route path="/search" render={() => <React.Fragment><SearchSong clonePlaylistToAC={this.clonePlaylistToAC} addPlaylistToAC={this.addPlaylistToAC} isSignedIn={this.state.isSignedIn} mobile={this.state.mobile} sendPlaylist={this.receivePlaylist} isUpdatingPlaylist={this.state.isUpdatingPlaylist} loopThroughExistingSongs={this.loopThroughExistingSongs} sendSongData={this.sendSongData} sendPlaylist={this.receivePlaylist} sendToApp={this.audioInfo} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying}/></React.Fragment>} />
             <Route exact path="/signin" render={() => <Admin sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/>} />
             <Route path="/playlist" render={() => <Playlist current={false} mobile={this.state.mobile} _id={this.state._id} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} sendPlaylist={this.receivePlaylist} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} appSongData={this.state.songData}/>} />
-            <Route path="/currentplaylist" render={() => <Playlist current={true} mobile={this.state.mobile} _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} />
-          <AudioPlayer origURL={this.state.origURL} url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} typeNumber={this.state.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.state.isSignedIn} username={(this.state.accountData) ? this.state.accountData.username : ''}/>
+            {/* <Route path="/currentplaylist" render ={() => <FullAudioPlayer origURL={this.state.origURL} url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} typeNumber={this.state.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.state.isSignedIn} username={(this.state.accountData) ? this.state.accountData.username : ''} imageURL={this.state.imageURL} xPos={this.state.xPos} yPos={this.state.yPos}/>}/> */}
+            
+            <AudioPlayer hideFullPlayer={this.hideFullPlayer} playlistURL={this.state.playlistPlayingID} isFull={window.location.pathname ? window.location.pathname : 'yeet'} origURL={this.state.origURL} url={this.state.url} title={this.state.title} artist={this.state.artist} anime={this.state.anime} type={this.state.type} typeNumber={this.state.typeNumber} setChildMethod={this.setChildMethod} setAudioPlayerLink2={this.setAudioPlayerLink2} setAudioPlayerLink3={this.setAudioPlayerLink3} playNextSong={this.handleNextSong} playPrevSong={this.handlePrevSong} handleSourceChange={this.handleSourceChange} isSignedIn={this.state.isSignedIn} username={(this.state.accountData) ? this.state.accountData.username : ''} imageURL={this.state.imageURL} xPos={this.state.xPos} yPos={this.state.yPos}/>
+
+            {/* <Route path="/currentplaylist" render={() => <Playlist current={true} mobile={this.state.mobile} _id={this.state.playlistPlayingID} sendToApp={this.audioInfo} unmountPlaylist={this.clearID} playlistNextSong={this.playlistNextSong} sendSongData={this.sendSongData} playSong={this.playSong} checkForCurrentlyPlaying={this.checkForCurrentlyPlaying} sendPlaylist={this.receivePlaylist} appSongData={this.state.songData}/>} /> */}
           
           {/* <Admin sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/> */}
           <footer>
