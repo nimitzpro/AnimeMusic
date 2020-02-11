@@ -36,10 +36,12 @@ class App extends React.Component{
       pPrivate:undefined, // Playlist is private or not
       pSongs:[], // List of song keys to be sent to DB
       pList:undefined, // pList is the component which actually renders on screen
+      pListHidden:<aside id="pListHidden"><ul style={{display:"inline-block",width:"70%",listStyleType:"none",fontSize:"0.8em",margin:"0 0",padding:"0 0"}}><li></li></ul><button style={{display:"inline-block",width:"auto"}} onClick={this.togglepList}>Hide</button></aside>, // pListHidden is the component which renders when pList is hidden
+      pListIsHidden:false, // Check for if pList is hidden
       songList:[], // list of song titles/anime names displayed in pList
       pID:undefined, // ID of playlist to be updated
       isUpdatingPlaylist:undefined, // Whether playlist is being updated or is new playlist
-      mobile:undefined // Responsiveness check, for setting rendering of search/playlist/player
+      mobile:undefined // Responsiveness check, for setting rendering of search/playlist/playe
     }
   }
 
@@ -64,7 +66,13 @@ receivePlaylistDetails = (pName,pPrivate,pSongs,pID,songsDetails,createdBy) =>{
   // console.log("Details received", pName, pPrivate)
 }
 
+cancelPlaylistEditing = () =>{
+  this.setState({addingToPlaylist:false,pName:'',pPrivate:undefined,pSongs:[],isUpdatingPlaylist:false,pID:undefined,pList:undefined,songList:[]});
+  document.getElementById('pListHidden').style.display = 'none';
+}
+
 refreshAside = (title,anime) =>{
+  document.getElementById('pListHidden').style.display = 'block';
   console.log("title",title)
     let songList = this.state.songList;
     if(title !== undefined){
@@ -80,11 +88,29 @@ refreshAside = (title,anime) =>{
   }
 }
 if(this.state.isUpdatingPlaylist){
-  this.setState({pList:<aside><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.updatePlaylistToDB}>Update Playlist</button></aside>});
+  this.setState({pList:<aside id="pList"><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.cancelPlaylistEditing}>Cancel</button><button onClick={this.updatePlaylistToDB} id="last">Update Playlist</button></aside>});
 }
 else{
-  this.setState({pList:<aside><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.addPlaylistToDB}>Submit Playlist</button></aside>});
+  this.setState({pList:<aside id="pList"><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.cancelPlaylistEditing}>Cancel</button><button onClick={this.addPlaylistToDB} id="last">Submit Playlist</button></aside>});
 }
+document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+}
+
+togglepList = () =>{
+  if(this.state.pListIsHidden){
+    document.getElementById('pList').style.display = 'block';
+    document.getElementById('pListHidden').querySelector("button").innerHTML = 'Hide';
+    document.getElementById('pListHidden').querySelector("li").style.display = 'none';
+    this.setState({pListIsHidden:false});
+  }
+  else{
+    document.getElementById('pList').style.display = 'none';
+    document.getElementById('pListHidden').querySelector("li").style.display = 'inline-block';
+    document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+    document.getElementById('pListHidden').querySelector("li").addEventListener('click',()=>this.removeSongFromPlaylist(this.state.songList.length - 1))
+    document.getElementById('pListHidden').querySelector("button").innerHTML = 'Show';
+    this.setState({pListIsHidden:true});
+  }
 }
 
 loopThroughExistingSongs = (songsDetails) =>{
@@ -468,6 +494,7 @@ render(){
             <h3><a href="http://nimitzpro.github.io">2020 Alexander Stradnic</a></h3>
           </footer>
           {this.state.pList}
+          {this.state.pListHidden}
           </BrowserRouter>
     </div>
   );

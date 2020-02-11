@@ -20,6 +20,15 @@
 
 #### Even newer things
 - Add full screen player page STARTED
-- Hidden side menu bar
 - playlist creation broken FIXED
+- Hidden side menu bar
 - Unsubmitted search doesn't save page url
+
+#### The newest of things
+##### Easy
+- Combine shuffle/repeat buttons into one, add playlist button for pc size
+- Make proper playlist button, separate from the hamburger icon for playlist settings
+##### Hard
+- HTTPS
+- JAP/ENG anime titles, with switch button
+- Change song file names to song ids

@@ -115,7 +115,9 @@ table tr{
 	cursor: pointer;
 	outline: inherit;
 } */
-
+#pListHidden{
+  display:none;
+}
 aside h3{
   text-align:center;
 }
@@ -126,7 +128,7 @@ aside ul li{
 aside li:hover{
   text-decoration: line-through;
 }
-aside button{
+#pList button{
   display:block;
   width:auto;
   margin:0 auto;
@@ -135,16 +137,28 @@ aside{
   position:fixed;
   right:0;
   top:0;
-  width:20%;
+  max-height:100%;
   text-align:left;
   padding:0.25em 0.75em 0.25em 0.75em;
   background-color:white;
-  border-bottom:0.3em solid rgb(0, 0, 0);
-  border-left:0.3em solid rgb(0, 0, 0);
   color:crimson;
   opacity: 0.85;
   transition:all 0.5s ease;
   font-size: 0.75em;
+  z-index:10;
+  overflow-y: scroll;
+}
+#pList{
+  width:20%;
+  border-bottom:0.3em solid rgb(0, 0, 0);
+  border-left:0.3em solid rgb(0, 0, 0);
+}
+#pListHidden{
+  padding: 0 0;
+  margin: 0 0;
+}
+aside #last{
+  margin-bottom:2em !important;
 }
 aside:hover{
   opacity:1;
@@ -185,6 +199,13 @@ aside:hover{
   /* margin:1em 1em !important; */
 }
 @media screen and (max-width:50em){
+  #pList, #pListHidden{
+    width:100%;
+    font-size: 1.15em;
+  }
+  aside button:first-child{
+    margin-right:0;
+  }
   #mobileSearch{
     width:100%;
   }
