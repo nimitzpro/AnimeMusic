@@ -53,7 +53,12 @@ export default class extends Component{
             axios.post('http://localhost:4000/signin/register',{name,email,pass})
             .then((result) => {
                 // this.regSuccess();
-                this.setState({content:<React.Fragment><h1>Account created!</h1></React.Fragment>})
+                if(result.status === 200){
+                    this.setState({content:<React.Fragment><h1>Account created!</h1></React.Fragment>})
+                }
+               else{
+                   this.setState({content:<React.Fragment><h1>Failed to create account ({result.status}).</h1>{this.state.reg}</React.Fragment>})
+               } 
             });
         }
     }

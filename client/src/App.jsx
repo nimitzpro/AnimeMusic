@@ -36,7 +36,7 @@ class App extends React.Component{
       pPrivate:undefined, // Playlist is private or not
       pSongs:[], // List of song keys to be sent to DB
       pList:undefined, // pList is the component which actually renders on screen
-      pListHidden:<aside id="pListHidden"><ul style={{display:"inline-block",width:"70%",listStyleType:"none",fontSize:"0.8em",margin:"0 0",padding:"0 0"}}><li></li></ul><button style={{display:"inline-block",width:"auto"}} onClick={this.togglepList}>Hide</button></aside>, // pListHidden is the component which renders when pList is hidden
+      pListHidden:<aside id="pListHidden"><ul style={{display:"inline-block",listStyleType:"none",fontSize:"0.8em",margin:"0 0",padding:"0 0"}}><li></li></ul><button style={{display:"inline-block",width:"auto"}} onClick={this.togglepList}>Hide</button></aside>, // pListHidden is the component which renders when pList is hidden
       pListIsHidden:false, // Check for if pList is hidden
       songList:[], // list of song titles/anime names displayed in pList
       pID:undefined, // ID of playlist to be updated
@@ -93,7 +93,13 @@ if(this.state.isUpdatingPlaylist){
 else{
   this.setState({pList:<aside id="pList"><h3>{this.state.pName}</h3><ul>{res}</ul><button onClick={this.cancelPlaylistEditing}>Cancel</button><button onClick={this.addPlaylistToDB} id="last">Submit Playlist</button></aside>});
 }
-document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+if(this.state.songList.length > 0){
+  document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+}
+else{
+  document.getElementById('pListHidden').querySelector("li").innerHTML = "No songs left";
+  document.getElementById('pListHidden').querySelector("li").removeEventListener('click',()=>this.removeSongFromPlaylist());
+}
 }
 
 togglepList = () =>{
@@ -106,7 +112,9 @@ togglepList = () =>{
   else{
     document.getElementById('pList').style.display = 'none';
     document.getElementById('pListHidden').querySelector("li").style.display = 'inline-block';
-    document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+    if(this.state.pList.length > 0){
+      document.getElementById('pListHidden').querySelector("li").innerHTML = `${this.state.songList[this.state.songList.length-1].title} - ${this.state.songList[this.state.songList.length-1].anime}`;
+    }
     document.getElementById('pListHidden').querySelector("li").addEventListener('click',()=>this.removeSongFromPlaylist(this.state.songList.length - 1))
     document.getElementById('pListHidden').querySelector("button").innerHTML = 'Show';
     this.setState({pListIsHidden:true});
@@ -315,7 +323,7 @@ getNextSong = async(shuffle) =>{
   let cache = this.state.playedSongsCache; // Might change shuffle functionality at some point
   let songDataLength = this.state.songData.length-1;
   console.log("shuffle",shuffle)
-  if(shuffle){
+  if(shuffle === 3){
     let res = await this.shuffle(songDataLength);
     while(true){
       let res = await this.shuffle(songDataLength);
@@ -491,7 +499,7 @@ render(){
           
           {/* <Admin sendPlaylistApp={this.receivePlaylist} sendPlaylistDetails={this.receivePlaylistDetails}  sendUid={this.receiveUid} isSignedIn={this.state.isSignedIn} accountData={this.state.accountData}/> */}
           <footer>
-            <h3><a href="http://nimitzpro.github.io">2020 Alexander Stradnic</a></h3>
+            <h3><a style={{marginBottom:"0"}} href="http://nimitzpro.github.io">2020 Alexander Stradnic </a><p style={{display:"inline-block",margin:"0 0"}}>- Version 0.571082α</p></h3>
           </footer>
           {this.state.pList}
           {this.state.pListHidden}

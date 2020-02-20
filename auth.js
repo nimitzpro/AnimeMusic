@@ -13,8 +13,10 @@ auth.get('/', async (req,res)=>{
 auth.post('/login', async (req,res)=>{
     try{
         let result = await Account.find({"email":req.body.email,"password":req.body.pass}).populate({path:"playlists", populate:{path:"songs"}});
-        if(result == null || result == []){
-            res.sendStatus(404).send("Email or password incorrect.");
+        // await console.log(result)
+        if(result == null || result.length < 1){
+            console.log("Failed to log in",req.body.email,req.body.pass);
+            res.sendStatus(404);
         }
         else{
             console.log(result);
@@ -23,7 +25,7 @@ auth.post('/login', async (req,res)=>{
                 // result.push({'react_admin':"<UploadSong /><DeleteSong />"});
                 console.log(result)
             }
-            res.send(result);
+            res.status(200).send(result);
         }
     }   
     catch(err){
@@ -49,11 +51,11 @@ auth.post('/register', async (req,res)=>{
     });
     try{
         const accountSaved = await account.save();
-        res.send(accountSaved);
+        res.sendStatus(200);
         console.log(accountSaved);
     }
     catch(err){
-        res.json({message:err});
+        res.sendStatus(500);
         console.log(err);
     }
 });

@@ -146,16 +146,29 @@ aside{
   transition:all 0.5s ease;
   font-size: 0.75em;
   z-index:10;
-  overflow-y: scroll;
 }
 #pList{
+  overflow-y: scroll;
   width:20%;
   border-bottom:0.3em solid rgb(0, 0, 0);
   border-left:0.3em solid rgb(0, 0, 0);
 }
 #pListHidden{
+  width:20%;
   padding: 0 0;
   margin: 0 0;
+}
+#pListHidden ul{
+  display:inline-block;
+  /* width:80% !important; */
+}
+#pListHidden li{
+  /* width:100%; */
+  display:none;
+  white-space: nowrap;
+  /* max-width:40ch; */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 aside #last{
   margin-bottom:2em !important;
@@ -293,4 +306,7 @@ h2,h3,h5{
   text-shadow: white 1px 0 10px;
   text-shadow: black 1px 0 10px,black 1px 0 10px,black 1px 0 10px,black 1px 0 10px;
   font-weight:bolder;
+  background-blend-mode: color-dodge;
+  box-shadow: white;
+  
 }

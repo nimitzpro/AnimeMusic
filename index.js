@@ -13,6 +13,10 @@ const Playlist = require('./models/Playlist');
 const DirectoryName = process.cwd().toString()+"/music/";
 const auth = require('./auth');
 
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+// const config = require('./config');
+
 // app.use(fileUpload({
 //     createParentPath: true
 // }));
@@ -26,7 +30,7 @@ app.use('/music',express.static(DirectoryName));
 
 app.use('/signin',auth);
 
-mongoose.connect('mongodb://localhost:27017/data', {useNewUrlParser: true},()=>{console.log("Connected to DB...");});
+mongoose.connect('mongodb://localhost:27017/data', {useNewUrlParser: true},()=>{mongoose.connection.readyState ? console.log("Connected to DB...") : (console.log("Failed to connect to DB.."),()=> process.exit())});
 
 app.get('/home',(req,res)=>{
     res.send("Hello from the backend!");

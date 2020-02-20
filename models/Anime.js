@@ -3,8 +3,9 @@ const Schema = Mongoose.Schema;
 
 const AnimeSchema = new Schema(
 {
-    anime: String,
-    image: String
+    nameENG: String,
+    nameJP: String
+    // image: String
 },{
     versionKey: false
 }

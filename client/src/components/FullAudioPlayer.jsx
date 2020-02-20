@@ -25,8 +25,12 @@ export default class extends Component{
             songLength:'0:00',
             repeat: 1, //0: Stop after song finishes, 1: Continue to next song, 2: Repeat same song
             replayIcon:replay,
-            shuffle: false, //, false: Ignore, true: Play random song in list
+            // shuffle: false, //, false: Ignore, true: Play random song in list
         }
+    }
+
+    componentDidMount(){
+        this.props.holdTheLine();
     }
 
     render(){
@@ -45,10 +49,10 @@ export default class extends Component{
                 <button id="audiobutton" onClick={this.props.skipForward}><img className="icon secIcon" src={skip} alt='' /></button>
                 </div>
                 <div id="other">
-                <button id="audiobutton" onClick={this.props.shuffle ? () => this.props.shuffleState(false) : () => this.props.shuffleState(true)}><img className="icon" id="shuffleIcon" src={shuffle} alt='' /></button>
+                {/* <button id="audiobutton" onClick={this.props.shuffle ? () => this.props.shuffleState(false) : () => this.props.shuffleState(true)}><img className="icon" id="shuffleIcon" src={shuffle} alt='' /></button> */}
                 <button id="audiobutton" onClick={this.props.repeatState}><img className="icon enabled" id="repeatIcon" src={this.props.replayIcon} alt='' /></button>
-                    <button id="audiobutton" id="homeIcon" onClick={() => this.props.hideFull("signin")}><img className="icon" src={HOMEICON} alt='' /></button>
-                    <button id="audiobutton" id="playlistIcon" onClick={() => this.props.hideFull("playlist")}><img className="icon" src={settings} alt='' /></button>
+                <button id="audiobutton" id="homeIcon" onClick={() => this.props.hideFull("signin")}><img className="icon" src={HOMEICON} alt='' /></button>
+                <button id="audiobutton" id="playlistIcon" onClick={() => this.props.hideFull("playlist")}><img className="icon" src={settings} alt='' /></button>
                 </div>
                 <div id="other2">
                 </div>

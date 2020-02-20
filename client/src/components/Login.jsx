@@ -186,13 +186,14 @@ handleOnClick = (_id) =>{
     this.props.sendPlaylist(_id);
 }
 
-onSubmit = (e) =>{
+onSubmit = async (e) =>{
     e.preventDefault();
     const pass = this.state.pass;
     const email = this.state.email;
-    Axios.post("/signin/login",{email,pass})
+    await Axios.post("/signin/login",{email,pass})
     .then((result) => {
         let playlist;
+        console.log("status:", result);
         if(result.data.length > 0){
         this.setState({loginRes:result.data});
         // console.log(result.data);
@@ -208,11 +209,10 @@ this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{res
             this.props.sendUid(result.data[0]);
         });
     }
-        else{
-            this.setState({email:'',pass:''});
-            document.getElementById("signInForm").reset();
-            this.setState({content:<React.Fragment>{this.state.logHorizon}<h3 style={{color:"red",textDecoration:"underline"}}>E-mail or password incorrect</h3></React.Fragment>})
-        }
+    }).catch((error)=>{
+        this.setState({email:'',pass:''});
+        document.getElementById("signInForm").reset();
+        this.setState({content:<React.Fragment>{this.state.logHorizon}<h3 style={{color:"red",textDecoration:"underline"}}>E-mail or password incorrect</h3></React.Fragment>})
     });
 }
 
