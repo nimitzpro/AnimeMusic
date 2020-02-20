@@ -12,7 +12,6 @@ export default class extends Component{
             anime:'',
             type:'Opening',
             typeNumber:'1',
-            season:'',
             xPos:'',
             yPos:'',
             form:''
@@ -39,8 +38,7 @@ export default class extends Component{
         const url = this.state.url.name;
         const title = this.state.title;
         const artist = this.state.artist;
-        const anime = this.state.anime;
-        const season = this.state.season;
+        const anime = this.state.animeID;
         const type = this.state.type;
         const typeNumber = this.state.typeNumber;
         const xPos = this.state.xPos;
@@ -50,7 +48,7 @@ export default class extends Component{
         Axios.post('/submitSong',data)
         .then((result)=>{
             if(result.status === 200){
-            Axios.post('/submit',{url,title,artist,anime,season,type,typeNumber,imageURL,xPos,yPos})
+            Axios.post('/submit',{url,title,artist,anime,type,typeNumber,imageURL,xPos,yPos})
             .then((result)=>{
             this.form();
             if(result.status === 200){

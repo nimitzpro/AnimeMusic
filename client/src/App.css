@@ -310,3 +310,22 @@ h2,h3,h5{
   box-shadow: white;
   
 }
+
+
+
+#animeSelect{
+  position:absolute;
+  z-index:5;
+  left:0;
+  top:0;
+  background-color:white;
+  list-style-type: none;
+  width:auto;
+  font-size: 0.6em;
+  text-align: left;
+  padding-left: 0;
+  margin:2.5em 0;
+}
+#animeSelect li{
+  padding:0.25em 0.25em;
+}

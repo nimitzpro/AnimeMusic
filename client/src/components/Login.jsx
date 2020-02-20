@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import UploadSong from './UploadSong.jsx';
 import UpdateSong from './UpdateSong.jsx';
 import DeleteSong from './DeleteSong.jsx';
+import AddAnime from './AddAnime.jsx';
 import Axios from 'axios';
 import {Link} from 'react-router-dom';
 import settings from '../assets/settings.png';
@@ -139,7 +140,7 @@ componentDidMount(){
             key.playlists.map((element) => {
                 return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
     })}</table></span></React.Fragment>
-    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><UpdateSong /><DeleteSong /></span> : ""}</React.Fragment>});
+    this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><UpdateSong /><DeleteSong /><AddAnime /></span> : ""}</React.Fragment>});
 }
 //         let email = this.props.email;{this.state.createPlaylist}
 //         let pass = this.props.pass;
@@ -203,7 +204,7 @@ onSubmit = async (e) =>{
     {key.playlists.map((element) => {
         return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
     })}</table></span></React.Fragment>})}</React.Fragment>;
-this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{result.data[0].admin ? <span><UploadSong/><UpdateSong /><DeleteSong /></span> : ""}</React.Fragment>,},()=>{
+this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{result.data[0].admin ? <span><UploadSong/><UpdateSong /><DeleteSong /><AddAnime /></span> : ""}</React.Fragment>,},()=>{
             // console.log(result.data[0]);
             this.setState({accountCache:result.data[0]});
             this.props.sendUid(result.data[0]);

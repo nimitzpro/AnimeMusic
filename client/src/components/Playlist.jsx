@@ -52,7 +52,7 @@ class Playlist extends Component{
                 let key = result.data.songs[i];
                 songList.push(<tr key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)}>
                 <td><img src={play} alt='' /></td>
-                <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>);
+                <td>{key.title}</td><td>{key.artist}</td><td>{this.props.en ? key.anime.nameENG : key.anime.nameJP}</td><td>{key.type} {key.typeNumber}</td></tr>);
             }
             // console.log(songList);
             let songs = <React.Fragment><div onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /><h2>{result.data.name}</h2></div><h3>Created by : {result.data.createdBy.username}</h3>
@@ -68,7 +68,7 @@ class Playlist extends Component{
                 let index = i;
                 let key = result.data.songs[i];
                 songList.push(<li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(sendtoSongData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
-                <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>);
+                <h3>{key.title}</h3><div id="artistMobile"><h5><span>{this.props.en ? key.anime.nameENG : key.anime.nameJP} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>);
             }
             // console.log(songList);
             let songs = <React.Fragment><div onClick={() => this.changePlaylistAndPlay(sendtoSongData,0,result.data.songs[0]._id)}><img src={play} alt='' /><h2>{result.data.name}</h2></div><h3>Created by : {result.data.createdBy.username}</h3>

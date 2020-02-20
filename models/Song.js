@@ -1,13 +1,13 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
+const Anime = require('./Anime');
 
 const SongSchema = new Schema(
 {
     url:String,
     title: String,
     artist: String,
-    anime: String,
-    season: String,
+    anime: {type:Schema.Types.ObjectId, ref:'Anime'},
     type: {
         type: String,
         enum: ['Opening','Ending','Insert']

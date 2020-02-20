@@ -39,7 +39,7 @@ export default class extends Component{
                 {/* <marquee behavior="" direction=""> */}
                     <h1>{this.props.title}</h1><br/>
                     <h2>{this.props.artist}</h2><br/>
-                    <h2>{this.props.anime} {this.props.season} - {this.props.type} {this.props.typeNumber}</h2>
+                    <h2>{this.props.en ? this.props.anime.nameENG : this.props.anime.nameJP} - {this.props.type} {this.props.typeNumber}</h2>
                     {/* </marquee> */}
                 <div style={{height:"20em",width:"20em",margin:"2em auto 0 auto",backgroundImage:`url(${this.props.imageURL})`,border:"1px double black",backgroundSize:"cover",backgroundPosition:`${this.props.xPos}% 0%`,marginBottom:"1em"}}></div>
                 <div id="buttons">

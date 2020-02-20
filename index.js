@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Song = require('./models/Song');
 const Playlist = require('./models/Playlist');
+const Anime = require('./models/Anime');
 // const Anime = require('./models/Anime');
 const DirectoryName = process.cwd().toString()+"/music/";
 const auth = require('./auth');
@@ -39,7 +40,7 @@ app.get('/home',(req,res)=>{
 // Returns all songs
 app.get('/all',async (req,res)=>{
     try{
-        const songs = await Song.find().sort({title:1});
+        const songs = await Song.find().sort({title:1}).populate('anime');
         res.send(songs);
         console.log("All");
     }
@@ -51,7 +52,7 @@ app.get('/all',async (req,res)=>{
 
 // Search specific song
 app.get('/searchforpreview/:_id', async (req,res)=>{
-    let song = await Song.findById({_id:req.params._id});
+    let song = await Song.findById({_id:req.params._id}).populate('anime');
     res.send(song);
 })
 
@@ -61,11 +62,15 @@ app.get('/search/:searchType/:query', async (req,res)=>{
     try{
         switch(req.params.searchType){
             case "anime":
-                songs = await Song.find({"anime":{$regex: req.params.query, $options: 'i'}}); 
+                songs = await Song.find({"anime":{$regex: req.params.query, $options: 'i'}}).populate('anime'); 
                 res.send(songs);
                 return;
             case "title":
-                songs = await Song.find({"title":{$regex: req.params.query, $options: 'i'}});
+                songs = await Song.find({"title":{$regex: req.params.query, $options: 'i'}}).populate('anime');
+                res.send(songs);
+                return;
+            case "artist":
+                songs = await Song.find({"artist":{$regex: req.params.query, $options: 'i'}}).populate('anime');
                 res.send(songs);
                 return;
             case "playlist":
@@ -200,7 +205,7 @@ app.get('/playlisttoupdate/:_id', async (req,res) =>{
 
 // Find and populate specific playlist
 app.get('/playlist/:_id', async (req,res) =>{
-    const playlist = await Playlist.findOne({"_id":req.params._id}).populate('songs').populate('createdBy', 'username');
+    const playlist = await Playlist.findOne({"_id":req.params._id}).populate({path:"songs", populate:{path:"anime"}}).populate('createdBy', 'username');
     res.send(playlist);
     console.log(playlist);
 });
@@ -234,6 +239,87 @@ app.patch('/updatesong',async (req,res)=>{
     const updateSong = await Song.findByIdAndUpdate({_id:req.body._id},{$set:req.body}, options = {upsert:true});
     res.sendStatus(200);
     console.log(updateSong);
+});
+
+// List all Anime
+app.get('/searchanime', async (req,res)=>{
+    const anime = await Anime.find({});
+    res.send(anime);
+    console.log(anime);
+});
+
+// Search for anime id/anime name for songs
+app.get('/searchanime/:searchType/:query', async (req,res)=>{
+    try{
+        switch(req.params.searchType){
+            case "_id":
+                let anime = await Anime.findById({_id:req.params.query});
+                res.status(200).send(anime);
+                console.log(anime);
+                break;
+            case "name":
+                let [animeNameENG, animeNameJP] = await Promise.all([Anime.find({"nameENG":{$regex: req.params.query, $options: 'i'}}), Anime.find({"nameJP":{$regex: req.params.query, $options: 'i'}})]);
+
+                if(animeNameENG.length > 0 && animeNameJP.length > 0){
+                    animeNameENG.concat(animeNameJP);
+                    res.status(200).send(animeNameENG);                    
+                }
+                else if(animeNameENG.length === 0 && animeNameJP.length > 0){
+                    res.send(animeNameJP);
+                }
+                else if(animeNameJP.length === 0 && animeNameENG.length > 0){
+                    res.send(animeNameENG);
+                }
+                else{
+                    res.sendStatus(404);
+                }
+
+                console.log(animeNameENG);
+                console.log(animeNameJP);
+
+                break;
+       }
+    }
+    catch(err){
+        res.sendStatus(404);
+    }
+});
+
+// Update/add Anime
+app.post('/updateanime', async (req,res)=>{
+    if(req.body._id){
+        try{
+            if(req.body.nameENG || req.body.nameJP){
+                const animeUpdated = await Anime.findByIdAndUpdate({_id:req.body._id},{$set:{nameENG:req.body.nameENG,nameJP:req.body.nameJP}}, options = {upsert:true});
+                console.log(animeUpdated);
+                res.sendStatus(200);
+            }
+        }
+        catch(err){
+            res.sendStatus(404);
+        }
+    }
+    else{
+        const anime = new Anime({
+            nameENG:req.body.nameENG,
+            nameJP:req.body.nameJP
+        });
+        try{
+            animeSaved = await anime.save();
+            res.status(200).send(animeSaved);
+            console.log(animeSaved);
+        }
+        catch(err){
+            res.json({message:err});
+            console.log(err);
+        }
+    }
+});
+
+// Delete Anime
+app.delete('/deleteanime/:_id', async(req,res)=>{
+    let animeDeleted = await Anime.findByIdAndDelete({_id:req.params._id});
+    console.log(animeDeleted);
 });
 
 app.listen(PORT, () => console.log("App listening on port "+PORT));

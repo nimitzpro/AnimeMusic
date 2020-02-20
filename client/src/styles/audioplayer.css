@@ -194,6 +194,7 @@
 #audioplayer #songinfo{
     flex-basis:18%;
     margin:0 0;
+    outline:0 !important;
 }
 #audioplayer #cont{
     display:none;

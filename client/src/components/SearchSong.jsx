@@ -55,10 +55,10 @@ dialogBox2 = (dialogID,enable) =>{
 }
 
 
-handleOnClick = (i) =>{
-  let songData = this.state.songData;
-  this.props.sendToApp(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,false,songData[i]._id);
-}
+// handleOnClick = (i) =>{
+//   let songData = this.state.songData;
+//   this.props.sendToApp(songData[i].url,songData[i].title,songData[i].artist,songData[i].anime,songData[i].season,songData[i].type,songData[i].typeNumber,i,false,songData[i]._id);
+// }
 
 all = (searchType) =>{
   if(searchType === 'playlist'){
@@ -92,7 +92,7 @@ all = (searchType) =>{
           {/* <audio controls><source src={key.url}></source></audio> */}
           <img src={play} alt='' />
           </td>
-      <td>{key.title}</td><td>{key.artist}</td><td>{key.anime} {key.season}</td><td>{key.type} {key.typeNumber}</td></tr>
+      <td>{key.title}</td><td>{key.artist}</td><td>{this.props.en ? key.anime.nameENG : key.anime.nameJP}</td><td>{key.type} {key.typeNumber}</td></tr>
     );
     })}
     </table>;
@@ -103,7 +103,7 @@ all = (searchType) =>{
     {result.data.map((key,index) =>{
       return(
       <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
-      <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
+      <h3>{key.title}</h3><div id="artistMobile"><h5><span>{this.props.en ? key.anime.nameENG : key.anime.nameJP} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
     );
     })}  
     </ul>
@@ -302,7 +302,6 @@ onSubmit = (e) =>{
     </table>
       this.setState({songs:songs});
       // this.props.updateURL(this.state.searchType,this.state.search);
-      
     }
   }
   else{
@@ -327,7 +326,7 @@ onSubmit = (e) =>{
       {result.data.map((key,index) =>{
         return(
         <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
-        <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
+        <h3>{key.title}</h3><div id="artistMobile"><h5><span>{this.props.en ? key.anime.nameENG : key.anime.nameJP}</span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
       );
       })}  
       </ul>
@@ -349,6 +348,7 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
             <select placeholder="Search By" name="searchType" onChange={this.handleChange}>
             <option value="anime" selected>Anime Name</option>
             <option value="title">Song Title</option>
+            <option value="artist">Artist</option>
             <option value="playlist">Playlist</option>
             </select>
         <button type="submit">Go</button>
