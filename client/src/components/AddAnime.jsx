@@ -77,7 +77,7 @@ class AddAnime extends Component{
         return(
             <React.Fragment>
                 {this.state.content}
-                {preview ? preview : ''}
+                {this.state.nameENG ? preview : ''}
             </React.Fragment>
         );
     }

@@ -129,8 +129,7 @@ togglepList = () =>{
 loopThroughExistingSongs = (songsDetails) =>{
   let songData = songsDetails;
   for(var songIndex=0;songIndex < songData.length;songIndex++){
-    songData[songIndex].season ? songData[songIndex].anime = songData[songIndex].anime+" "+songData[songIndex].season : songData[songIndex].anime = songData[songIndex].anime;
-    this.refreshAside(songData[songIndex].title,songData[songIndex].anime);
+    this.refreshAside(songData[songIndex].title,songData[songIndex].anime.nameENG);
   }
 }
 
@@ -201,12 +200,11 @@ sendSongData = async (songData, songIndex,songKey,calledFromPlayer) =>{
   });
   }
 else{
-  songData[songIndex].season ? songData[songIndex].anime = songData[songIndex].anime+" "+songData[songIndex].season : songData[songIndex].anime = songData[songIndex].anime;
   let songs = this.state.pSongs;
   if(!songs.includes(songKey)){
     songs.push(songKey);
     console.log(songData[songIndex].title, "added to", this.state.pName);
-    this.refreshAside(songData[songIndex].title,songData[songIndex].anime);
+    this.refreshAside(songData[songIndex].title,songData[songIndex].anime.nameENG);
   }
 }
   // this.setState({playlistPlaying:true});

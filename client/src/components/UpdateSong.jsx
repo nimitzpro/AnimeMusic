@@ -53,7 +53,7 @@ export default class extends Component{
     }
 
     selectAnime = (_id,nameENG,nameJP)=>{
-        this.setState({animeID:_id,anime:nameENG,animeList:''});
+        this.setState({animeID:_id,anime:{nameENG:nameENG},animeList:''});
     }
 
     getAnimeDetails = () =>{
