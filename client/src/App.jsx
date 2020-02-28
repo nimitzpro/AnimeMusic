@@ -47,7 +47,14 @@ class App extends React.Component{
   }
 
 changeLang = () =>{
-  this.state.en ? this.setState({en:false}) : this.setState({en:true});
+  if(this.state.en){
+    this.setState({en:false});
+    localStorage.setItem('lang',false);
+  }
+  else{
+    this.setState({en:true});
+    localStorage.setItem('lang',true);
+  }
 }
 
 // handleSourceChange = (childFunc) =>{
@@ -141,22 +148,36 @@ removeSongFromPlaylist = (i) =>{
   this.setState({pSongs:pSongs,songList:songList},()=>this.refreshAside());
 }
 
-updatePlaylistToDB = () =>{
+updatePlaylistToDB = async() =>{
   const songs = this.state.pSongs;
   const _id = this.state.pID;
   Axios.patch('/updateplaylist',{_id,songs}).then((response)=>{
     if(response.status === 200){
       this.setState({pList:<aside><h3>Playlist {this.state.pName} updated!</h3></aside>},()=>{
-      setTimeout(()=>{
-        // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
-        window.location.reload(true);
-      },3000);
+        if(localStorage.getItem('ltoken') !== undefined){
+          let user = "test";
+          let token = localStorage.getItem('ltoken');
+          // let config = {headers:{'auth-token':token}};
+          console.log(localStorage.getItem('ltoken'));
+          console.log("TOKEN : ", token)
+          Axios({method:"POST",url:"/signin/login",headers:{'ltoken': token},data:{user}}).then((result)=>{
+            this.setState({accountData:result.data, isSignedIn:true});
+            this.setState({addingToPlaylist:false,pName:'',pPrivate:undefined,pSongs:[],isUpdatingPlaylist:false,pID:undefined,pList:undefined,songList:[]});
+            document.getElementById('pListHidden').style.display = 'none';
+          });
+      }
+      else{
+        setTimeout(()=>{
+          // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
+          window.location.reload(true);
+        },500);
+      }
     });
     }
   });
 }
 
-addPlaylistToDB = () =>{
+addPlaylistToDB = async() =>{
   console.log("testing");
   console.log(this.state.pName,this.state.pPrivate,this.state.accountData._id,this.state.pSongs);
   const name = this.state.pName;
@@ -171,10 +192,24 @@ addPlaylistToDB = () =>{
       Axios.patch('/signin/addplaylist',{_id,playlist}).then((response2)=>{
         if(response2.status === 200){
           this.setState({pList:<aside><h3>Playlist {this.state.pName} created!</h3></aside>},()=>{
-          setTimeout(()=>{
-            // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
-            window.location.reload(true);
-          },3000);
+            if(localStorage.getItem('ltoken')){
+              let user = "test";
+              let token = localStorage.getItem('ltoken');
+              // let config = {headers:{'auth-token':token}};
+              console.log(localStorage.getItem('ltoken'));
+              console.log("TOKEN : ", token)
+              Axios({method:"POST",url:"/signin/login",headers:{'ltoken': token},data:{user}}).then((result)=>{
+                this.setState({accountData:result.data, isSignedIn:true});
+                this.setState({addingToPlaylist:false,pName:'',pPrivate:undefined,pSongs:[],isUpdatingPlaylist:false,pID:undefined,pList:undefined,songList:[]});
+                document.getElementById('pListHidden').style.display = 'none';
+              });
+          }
+          else{
+            setTimeout(()=>{
+              // this.setState({pName:'',pList:undefined,pSongs:[],pPrivate:undefined,songList:[]});
+              window.location.reload(true);
+            },500);
+          }
         });
         }
       });
@@ -408,13 +443,55 @@ responsiveSearch = (x)=>{
   }
 }
 
-componentDidMount = () =>{
+componentDidMount = async () =>{
+  // let lang = await ;
+  if(localStorage.getItem('lang') == 'false'){
+    this.changeLang();
+  }
+  else{
+    localStorage.setItem('lang', true);
+  }
+
   var x = window.matchMedia("(max-width: 50em)");
   this.responsiveSearch(x);
   this.updateURL();
   this.setAudioPlayerLink3();
+  const user = "test";
+  if(localStorage.getItem('ltoken') !== undefined){
+    let token = await localStorage.getItem('ltoken');
+    // let config = {headers:{'auth-token':token}};
+    console.log(localStorage.getItem('ltoken'));
+    console.log("TOKEN : ", token)
+    Axios({method:"POST",url:"/signin/login",headers:{'ltoken': token},data:{user}}).then((result)=>{
+      this.setState({accountData:result.data, isSignedIn:true});
+    });
 }
+}
+// let ltoken = this.getCookie('ltoken');
+// if(ltoken){
+//   setInterval(()=>this.refreshToken(ltoken),1500);
+// }
+// }
 
+// refreshToken = () =>{
+
+// }
+
+// getCookie = (cname) => {
+//   var name = cname + "=";
+//   var decodedCookie = decodeURIComponent(document.cookie);
+//   var ca = decodedCookie.split(';');
+//   for(var i = 0; i < ca.length; i++) {
+//     var c = ca[i];
+//     while (c.charAt(0) == ' ') {
+//       c = c.substring(1);
+//     }
+//     if (c.indexOf(name) == 0) {
+//       return c.substring(name.length, c.length);
+//     }
+//   }
+//   return "";
+// }
 
 updateURL = () =>{
   console.log("got to here");

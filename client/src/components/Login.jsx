@@ -14,6 +14,7 @@ constructor(props){
     this.state = {
         email:'',
         pass:'',
+        stayLoggedIn:undefined,
         content:'',
         pName:'',
         pPrivate:true,
@@ -22,6 +23,7 @@ constructor(props){
         <form onSubmit={this.onSubmit} id="signInForm" method="post">
             <h2>E-mail : </h2><input name="email" onChange={this.onChange}></input><br />
             <h2>Password : </h2><input name="pass" type="password" onChange={this.onChange}></input><br />
+            <h2>Stay Logged In? </h2><input name="stayLoggedIn" type="checkbox" onChange={this.onChange}></input><br />
             <input type="submit" value="Login" id="button"></input>
         </form>
         </section>,
@@ -35,6 +37,19 @@ constructor(props){
         </React.Fragment>,
         dialogBoxID:'', // ID of dialog box that is open currently
         accountCache:undefined // account data temporarily cached in the first veiwing of details; accountData from app.jsx to be used after
+    }
+}
+
+signOut = async () =>{
+    if(localStorage.getItem('ltoken')){
+        let token = await localStorage.getItem('ltoken');
+        Axios({method:"DELETE",url:"/signin/removetoken",headers:{'ltoken': token}}).then((result)=>{
+            window.location.reload(true);
+            localStorage.removeItem('ltoken');
+        });
+    }
+    else{
+        window.location.reload(true);
     }
 }
 
@@ -129,17 +144,18 @@ deletePlaylist = (playlistID) =>{
     });
 }
 
-componentDidMount(){
-    let accountData = this.props.accountData;
+componentDidMount = async () =>{
+    let accountData = await this.props.accountData;
+    // || localStorage.getItem('ltoken')
     if(accountData !== undefined){
         // console.log("Got to here",this.props);
-        let key = accountData;
+        let key = await accountData;
         let response = <React.Fragment>
             <span><h1>{key.username}'s Profile</h1></span><span><h4>{key.email}</h4></span><h4 style={{color:"crimson"}}>{key.admin ? "Admininstrator" : ""}</h4>
             <h2>Playlists : </h2><br /><span><table><tr><th>Name</th><th>Privacy</th><th>Length</th></tr>{
             key.playlists.map((element) => {
                 return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
-    })}</table></span></React.Fragment>
+    })}</table></span><br/><h2 id="signout" style={{textAlign:"center",fontSize:"1.25em"}}><button style={{fontSize:"100%",border:"none", background:"transparent",display:"block", color:"red"}}onClick={this.signOut}>Sign Out</button></h2></React.Fragment>
     this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{accountData.admin ? <span><UploadSong/><UpdateSong /><DeleteSong /><AddAnime /></span> : ""}</React.Fragment>});
 }
 //         let email = this.props.email;{this.state.createPlaylist}
@@ -191,8 +207,12 @@ onSubmit = async (e) =>{
     e.preventDefault();
     const pass = this.state.pass;
     const email = this.state.email;
-    await Axios.post("/signin/login",{email,pass})
+    const stayLoggedIn = this.state.stayLoggedIn ? this.state.stayLoggedIn : false;
+    await Axios.post("/signin/login",{email,pass,stayLoggedIn})
     .then((result) => {
+        // localStorage.setItem("atoken", JSON.stringify(result.headers.atoken));
+        // localStorage.setItem("rtoken", JSON.stringify(result.headers.rtoken));
+        if(stayLoggedIn) localStorage.setItem("ltoken", JSON.stringify(result.headers.ltoken));
         let playlist;
         console.log("status:", result);
         if(result.data.length > 0){
@@ -203,7 +223,7 @@ onSubmit = async (e) =>{
     <h2>Playlists : </h2><br /><span><table><tr><th>Name</th><th>Privacy</th><th>Length</th></tr>
     {key.playlists.map((element) => {
         return(<tr key={element._id}><td><Link to="/playlist" className="link" onClick={() =>this.handleOnClick(element._id)}>{element.name}</Link></td><td>{element.private ? "Private" : "Public"}</td><td>{element.songs.length} Songs</td><td className="settings" ><img src={settings} onClick={() => this.dialogBox("dialog"+element._id,true)} /><ul id={"dialog"+element._id} className="dialogbox"><li onClick={() => this.fetchPlaylistToEdit(element._id)}>Edit Playlist</li><li style={{"color":"crimson","fontWeight":"bolder"}} onClick={() => this.deletePlaylist(element._id)}>Delete Playlist</li></ul></td></tr>);
-    })}</table></span></React.Fragment>})}</React.Fragment>;
+    })}</table></span></React.Fragment>})}<br/><h2 id="signout" style={{textAlign:"center",fontSize:"1.25em"}}><button style={{fontSize:"100%",border:"none", background:"transparent",display:"block", color:"red"}}onClick={this.signOut}>Sign Out</button></h2></React.Fragment>;
 this.setState({content:<React.Fragment>{response}{this.state.createPlaylist}{result.data[0].admin ? <span><UploadSong/><UpdateSong /><DeleteSong /><AddAnime /></span> : ""}</React.Fragment>,},()=>{
             // console.log(result.data[0]);
             this.setState({accountCache:result.data[0]});

@@ -15,7 +15,8 @@ const SongSchema = new Schema(
     typeNumber:Number,
     imageURL:String,
     xPos:Number,
-    yPos:Number
+    yPos:Number,
+    verified: Boolean
 },{
     versionKey: false
 }

@@ -39,7 +39,7 @@ export default class extends Component{
 
 
 
-    onSubmit = (e) =>{
+    onSubmit = async (e) =>{
         e.preventDefault()
         // get our form data out of state
         const { name, email, pass, confpass } = this.state;
@@ -50,7 +50,7 @@ export default class extends Component{
         this.setState({content:<div>{this.state.reg}<em><h2>Password and confirmation were different, please try again.</h2></em></div>});
         }
         else{
-            axios.post('http://localhost:4000/signin/register',{name,email,pass})
+            await axios.post('/signin/register',{name,email,pass})
             .then((result) => {
                 // this.regSuccess();
                 if(result.status === 200){
@@ -59,6 +59,8 @@ export default class extends Component{
                else{
                    this.setState({content:<React.Fragment><h1>Failed to create account ({result.status}).</h1>{this.state.reg}</React.Fragment>})
                } 
+            }).catch((err)=>{
+                this.setState({content:<React.Fragment>{this.state.reg}<h1 style={{color:"red"}}>Failed to create account.</h1></React.Fragment>})
             });
         }
     }

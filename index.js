@@ -38,10 +38,13 @@ app.get('/home',(req,res)=>{
 });
 
 // Returns all songs
-app.get('/all',async (req,res)=>{
+app.get('/all/:index',async (req,res)=>{
+    let sendingSongs;
     try{
         const songs = await Song.find().sort({title:1}).populate('anime');
-        res.send(songs);
+        sendingSongs = songs.slice(20*Number(req.params.index),(20*Number(req.params.index))+20);
+        console.log(sendingSongs);
+        res.send(sendingSongs);
         console.log("All");
     }
     catch(err){
@@ -57,25 +60,70 @@ app.get('/searchforpreview/:_id', async (req,res)=>{
 })
 
 // Returns searched songs
-app.get('/search/:searchType/:query', async (req,res)=>{
+app.get('/search/:searchType/:query/:index', async (req,res)=>{
+    let sendingSongs;
     let songs;
+    let anime = [];
     try{
         switch(req.params.searchType){
             case "anime":
-                songs = await Song.find({"anime":{$regex: req.params.query, $options: 'i'}}).populate('anime'); 
-                res.send(songs);
+                // anime = await Anime.find({"nameENG":{$regex: req.params.query, $options: 'i'}},"_id"); // Add nameJP and merge
+
+                let [animeNameENG, animeNameJP] = await Promise.all([Anime.find({"nameENG":{$regex: req.params.query, $options: 'i'}}, "_id"), Anime.find({"nameJP":{$regex: req.params.query, $options: 'i'}}, "_id")]);
+
+                if(animeNameENG.length > 0 && animeNameJP.length > 0){
+                    animeNameENG.concat(animeNameJP);
+                    anime = animeNameENG;                    
+                }
+                else if(animeNameENG.length === 0 && animeNameJP.length > 0){
+                    anime = animeNameJP;
+                }
+                else if(animeNameJP.length === 0 && animeNameENG.length > 0){
+                    anime = animeNameENG;
+                }
+
+                let listOfIds = [];
+                for(let i = 0; i < anime.length; i++){
+                    await listOfIds.push(anime[i]._id);
+                    console.log(anime[i]._id)
+                }
+                console.log(listOfIds);
+                // console.log(anime);
+                // anime = anime.toString;
+                // anime = "Classroom of the Elite";
+                // listOfIds = new RegExp(listOfIds);
+                songs = await Song.find({"anime":listOfIds}).populate('anime'); 
+                console.log(songs)
+                // console.log(songs);
+                // songs = await Song.lookup({
+                //     path: 'anime',
+                //     query: { 'nameENG' :  RegExp(req.params.query, 'i')}
+                //   
+                console.log("in anime")
+                sendingSongs = songs.slice(20*req.params.index,(20*req.params.index)+20);
+
+                res.send(sendingSongs);
                 return;
             case "title":
                 songs = await Song.find({"title":{$regex: req.params.query, $options: 'i'}}).populate('anime');
-                res.send(songs);
+                
+                sendingSongs = songs.slice(20*req.params.index,(20*req.params.index)+20);
+
+                res.send(sendingSongs);
                 return;
             case "artist":
                 songs = await Song.find({"artist":{$regex: req.params.query, $options: 'i'}}).populate('anime');
-                res.send(songs);
+                
+                sendingSongs = songs.slice(20*req.params.index,(20*req.params.index)+20);
+
+                res.send(sendingSongs);
                 return;
             case "playlist":
                 songs = await Playlist.find({"name":{$regex:req.params.query, $options: 'i'},"private":"false"}).populate('createdBy', 'username');
-                res.send(songs);
+                
+                sendingSongs = songs.slice(20*req.params.index,(20*req.params.index)+20);
+
+                res.send(sendingSongs);
                 return;
         }
         }
@@ -187,6 +235,12 @@ app.delete('/playlist/:_id', async (req,res)=>{
     await Playlist.deleteOne({_id:req.params._id}).then(res.sendStatus(200));
     console.log(req.params._id+" deleted.");
 })
+
+// TESTING - Remove all playlists
+// app.delete('/deleteallplaylists', async (req,res)=>{
+//     const playlists = await Playlist.deleteMany({});
+//     console.log("Deleted", playlists);
+// });
 
 // Find playlists
 app.get('/findplaylists', async (req,res)=>{

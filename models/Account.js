@@ -4,14 +4,25 @@ const Playlist = require('./Playlist');
 
 const AccountSchema = new Schema(
 {
-    email: String,
-    username: String,
+    email: {
+        type: String,
+        required: true,
+        min: 6
+    },
+    username: {
+        type: String,
+        required: true,
+        min: 6
+    },
     admin: {
         type:Boolean,
         default:false
     },
     playlists: [{type:Schema.Types.ObjectId, ref:'Playlist'}],
-    password: String
+    password: {
+        type: String,
+        required: true
+    }
 },{
     versionKey: false
 }

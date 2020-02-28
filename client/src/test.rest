@@ -1,0 +1,8 @@
+POST http://localhost:3000/signin/login
+auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTU1M2RiZWZmMmNiODFkZWY4MTE1OTMiLCJpYXQiOjE1ODI2NzQ5MDksImV4cCI6MTU4MzI3OTcwOX0.tnMvKyzKbufGtdgXuzEIKVnu8TDor1EH_3HUzEZq3A8
+# Content-Type: application/json
+
+# {
+#     "email": "liam@gmail.com",
+#     "pass": "liam"
+# }

@@ -1,6 +1,6 @@
  #admin h2{
     display:inline-block;
-    margin-left:1.5em;
+    /* margin-left:1.5em; */
     font-size:1em;
 }
 /* #admin h1{
@@ -71,4 +71,8 @@
 #loginRes{
     display:block;
     width:100%;
+}
+
+#signout button:hover{
+    text-decoration: underline;
 }

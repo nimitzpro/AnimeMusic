@@ -14,7 +14,8 @@ class SearchSong extends React.Component{
       searchType:'anime',
       songData:'',
       origURL:'',
-      dialogBoxID:''
+      dialogBoxID:'',
+      pageIndex:0
     }
   }
 
@@ -80,7 +81,7 @@ all = (searchType) =>{
       });
   }
   else{
-    Axios.get('/all').then(result => {
+    Axios.get('/all/'+this.state.pageIndex).then(result => {
       this.setState({songData:result.data});
       if(!this.props.mobile){
       let songs = <table>
@@ -174,7 +175,7 @@ onChange = () => {
   // get our form data out of state
     // console.log(searchType);
     // this.props.history.push('/search/'+searchType+'/'+search);
-    Axios.get('/search/'+searchType+'/'+search, {}).then((result)=>{
+    Axios.get('/search/'+searchType+'/'+search+'/'+this.state.pageIndex, {}).then((result)=>{
       if(!this.props.mobile){
       if(searchType === 'playlist'){
         let songs = <table>
@@ -232,7 +233,7 @@ onChange = () => {
         {result.data.map((key,index) =>{
           return(
           <li key={key._id} id={key._id} onClick={() => this.changePlaylistAndPlay(this.state.songData,index,key._id)} style={{backgroundImage:`linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${key.imageURL})`,backgroundPosition:`0% ${key.yPos}%`}}>
-          <h3>{key.title}</h3><div id="artistMobile"><h5><span>{key.anime} {key.season} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
+          <h3>{key.title}</h3><div id="artistMobile"><h5><span>{this.props.en ? key.anime.nameENG : key.anime.nameJP} </span><span>- {key.type} {key.typeNumber}</span></h5><h3>{key.artist}</h3></div></li>
         );
         })}  
         </ul>
@@ -265,9 +266,10 @@ onSubmit = (e) =>{
     search = this.state.search;
   }else{search = "";}
   const searchType = this.state.searchType;
+  const pageIndex = this.state.pageIndex;
     console.log(search);
     this.props.history.push('/search/'+searchType+'/'+search);
-    Axios.get('/search/'+searchType+'/'+search,{}).then((result)=>{
+    Axios.get('/search/'+searchType+'/'+search+'/'+pageIndex,{}).then((result)=>{
       if(!this.props.mobile){
       if(searchType === 'playlist'){
         let songs = <table>
@@ -336,6 +338,16 @@ onSubmit = (e) =>{
     }).catch(err=>{this.all(searchType)});
 } 
 
+changePageIndex = (x) =>{
+  let index = this.state.pageIndex;
+  let change = index + x;
+  if(change >= 0){
+    this.setState({pageIndex:index+x});
+  }
+  else this.setState({pageIndex:0});
+  this.onSubmit();
+}
+
 changePlaylistAndPlay = async (songData,i,songKey) =>{
   this.props.sendSongData(songData,i,songKey,false);
 }  
@@ -354,6 +366,8 @@ changePlaylistAndPlay = async (songData,i,songKey) =>{
         <button type="submit">Go</button>
           </form>
           {this.state.songs}
+          <button onClick={()=>this.changePageIndex(-1)}>Previous</button>
+          <button onClick={()=>this.changePageIndex(1)}>Next</button>
         </div>
         );
     }
