@@ -181,7 +181,7 @@ app.post('/submitSong',async (req,res)=>{
         } else if (err) {
             return res.status(500).json(err)
         }
-        console.log(req.file.originalname, req.body.title);
+  //      console.log(req.file.originalname, req.body.title);
    return res.status(200).send(req.file.originalname);
  });
 });
@@ -194,7 +194,7 @@ app.post('/submit',async (req,res)=>{
         anime: req.body.anime,
         type: req.body.type,
         typeNumber: req.body.typeNumber,
-        season: req.body.season,
+//        season: req.body.season,
         imageURL:req.body.imageURL,
         xPos:req.body.xPos,
         yPos:req.body.yPos
