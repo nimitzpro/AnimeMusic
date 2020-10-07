@@ -7,6 +7,9 @@ const Account = require('./models/Account');
 const Playlist = require('./models/Playlist');
 const Key = require('./models/Key');
 
+require('dotenv').config();
+
+
 auth.get('/keys', async (req,res)=>{
     res.send(await Key.find({}));
 });
@@ -20,7 +23,7 @@ auth.delete('/removetoken', async (req,res)=>{
     let token = req.header('ltoken');
     token = token.slice(1,token.length-1);
     console.log("TOKEN TO REMOVE :", token);
-    let user = jwt.verify(token,"h7za01NXT37WQvlXF7j22L7egV96M5eWLtObmK0HYvW1LMKgI21iiV2wuap2D7k")
+    let user = jwt.verify(token, process.env.TOKEN)
     await Key.findOneAndUpdate({_id:user._id},{$set:{ltoken:""}});
     res.send(200);
 });

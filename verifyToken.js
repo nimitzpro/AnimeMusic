@@ -9,11 +9,6 @@ module.exports = async function(req,res,next){
     try{
         token = token.slice(1,token.length-1);
         console.log("receiving token", token)
-        // const verified = jwt.verify(token, "h7za01NXT37WQvlXF7j22L7egV96M5eWLtObmK0HYvW1LMKgI21iiV2wuap2D7k");
-        // req.user = verified;
-        // const aTokenVerified = jwt.verify(atoken, token);
-        // if(aTokenVerified) req.user = atoken;
-        // else{
             const inDB = await Key.findOne({ltoken:token});
             if(inDB.length < 1){
             }
